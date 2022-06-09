@@ -54,7 +54,7 @@ catch (Exception $e) {
 function syncServers() {
   	
 	log::add('pterodactyl', 'debug', '======== SYNC PTERODACTYL ========');
-    $p = new pterodactylApi(config::byKey('apiKey', 'pterodactyl'), config::byKey('urlRoot', 'pterodactyl'));
+    $p = new pterodactylApi(config::byKey('apiKey', 'pterodactyl'), config::byKey('pteroRootUrl', 'pterodactyl'));
     $response = $p->getListServers();
 	log::add('pterodactyl', 'debug', "liste des serveurs: " . json_encode($response));
   	$detailServers = [];
