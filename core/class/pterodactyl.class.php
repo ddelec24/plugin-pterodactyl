@@ -358,7 +358,7 @@ class pterodactyl extends eqLogic {
     // isSuspended
     $info = $this->getCmd(null, 'isSuspended');
     if (!is_object($info)) {
-      $info = new mideawifiCmd();
+      $info = new pterodactylCmd();
       $info->setName(__('Etat Suspendu', __FILE__));
     }
     $info->setOrder($order++);
@@ -471,7 +471,7 @@ class pterodactyl extends eqLogic {
 	// rafraichir
 	$refresh = $this->getCmd(null, 'refresh');
 	if (!is_object($refresh)) {
-		$refresh = new mideawifiCmd();
+		$refresh = new pterodactylCmd();
 		$refresh->setName(__('Rafraîchir', __FILE__));
 	}
     $refresh->setOrder($order++);
@@ -526,7 +526,7 @@ class pterodactyl extends eqLogic {
   /*     * **********************Getteur Setteur*************************** */
   	public function updateMainInfos() {
     	$identifier = $this->getLogicalId();
-      	$p = new pterodactylApi(config::byKey('apiKey', 'pterodactyl'), config::byKey('urlRoot', 'pterodactyl'));
+      	$p = new pterodactylApi(config::byKey('apiKey', 'pterodactyl'), config::byKey('pteroRootUrl', 'pterodactyl'));
       	$details = $p->getServerDetails($identifier);
       	//log::add('pterodactyl', 'debug', "Détail du serveur: " . $identifier . ": " . json_encode($details));
       	log::add('pterodactyl', 'debug', "Détail du serveur: " . json_encode($details->attributes));
@@ -563,7 +563,7 @@ class pterodactyl extends eqLogic {
   
 	public function updateInfos() {
     	$identifier = $this->getLogicalId();
-      	$p = new pterodactylApi(config::byKey('apiKey', 'pterodactyl'), config::byKey('urlRoot', 'pterodactyl'));
+      	$p = new pterodactylApi(config::byKey('apiKey', 'pterodactyl'), config::byKey('pteroRootUrl', 'pterodactyl'));
       	$resources = $p->getResourcesUsage($identifier);
       	//log::add('pterodactyl', 'debug', "Détail du serveur: " . $identifier . ": " . json_encode($resources));
       
