@@ -25,32 +25,28 @@ if (!isConnect()) {
 <form class="form-horizontal">
   <fieldset>
     <div class="form-group">
-      <label class="col-md-4 control-label">{{Global param 1}}
-        <sup><i class="fas fa-question-circle tooltips" title="{{Renseignez le paramètre 1 du plugin}}"></i></sup>
+      <label class="col-md-4 control-label">{{Url de votre pterodactyl}}
+        <sup><i class="fas fa-question-circle tooltips" title="{{Renseignez la racine de votre pterodactyl (ex: https://mypterodactyl.io) sans le / de fin}}"></i></sup>
       </label>
       <div class="col-md-4">
-        <input class="configKey form-control" data-l1key="param1"/>
+        <input class="configKey form-control" data-l1key="pteroRootUrl"/>
       </div>
     </div>
     <div class="form-group">
-      <label class="col-md-4 control-label">{{Global param 2}}
-        <sup><i class="fas fa-question-circle tooltips" title="{{Renseignez le paramètre 2 du plugin}}"></i></sup>
+      <label class="col-md-4 control-label">{{Clé API pour les requêtes}}
+        <sup><i class="fas fa-question-circle tooltips" title="{{Clé API de l'utilisateur qui fera les requêtes}}"></i></sup>
       </label>
       <div class="col-md-4">
-        <input class="configKey form-control" data-l1key="param2"/>
+        <input class="configKey form-control" data-l1key="apiKey"/>
       </div>
     </div>
-    <div class="form-group">
-      <label class="col-md-4 control-label">{{Global param 3}}
-        <sup><i class="fas fa-question-circle tooltips" title="{{Sélectionnez du paramètre 3 du plugin}}"></i></sup>
-      </label>
-      <div class="col-md-4">
-        <select class="configKey form-control" data-l1key="param3">
-          <option value=""></option>
-          <option value="value1">value1</option>
-          <option value="value2">value2</option>
-        </select>
-      </div>
-    </div>
+	<div class="form-group">
+          <div class="col-md-4"></div>
+          <div class="col-md-6">
+          		<i>* aide pour avoir une clé api : <a href="https://dashflo.net/docs/api/pterodactyl/v1/">
+      				https://dashflo.net/docs/api/pterodactyl/v1/
+				</a></i>
+          </div>
+	</div>
   </fieldset>
 </form>

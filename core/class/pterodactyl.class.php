@@ -18,6 +18,9 @@
 /* * ***************************Includes********************************* */
 require_once __DIR__  . '/../../../../core/php/core.inc.php';
 
+// Appel classe pour requetes API pterodactyl
+require_once dirname(__FILE__) . '/../../resources/pterodactylApi.php';
+
 class pterodactyl extends eqLogic {
   /*     * *************************Attributs****************************** */
 
@@ -35,10 +38,17 @@ class pterodactyl extends eqLogic {
 
   /*     * ***********************Methode static*************************** */
 
-  /*
-  * Fonction exécutée automatiquement toutes les minutes par Jeedom
-  public static function cron() {}
-  */
+  
+  //* Fonction exécutée automatiquement toutes les minutes par Jeedom
+  public static function cron() {
+  		foreach (self::byType('pterodactyl') as $eqLogicPterodactyl) {
+			if($eqLogicPterodactyl->getIsEnable() == 1)
+				$eqLogicPterodactyl->updateInfos();
+
+			log::add('pterodactyl', 'debug', 'update Serveur ' . $eqLogicPterodactyl->getName());
+		}
+  }
+  
 
   /*
   * Fonction exécutée automatiquement toutes les 5 minutes par Jeedom
@@ -65,10 +75,17 @@ class pterodactyl extends eqLogic {
   public static function cronHourly() {}
   */
 
-  /*
-  * Fonction exécutée automatiquement tous les jours par Jeedom
-  public static function cronDaily() {}
-  */
+  
+  //* Fonction exécutée automatiquement tous les jours par Jeedom
+  public static function cronDaily() {
+    		foreach (self::byType('pterodactyl') as $eqLogicPterodactyl) {
+			if($eqLogicPterodactyl->getIsEnable() == 1)
+				$eqLogicPterodactyl->updateMainInfos();
+
+			log::add('pterodactyl', 'debug', 'update Infos Principales Serveur ' . $eqLogicPterodactyl->getName());
+		}
+  }
+  
 
   /*     * *********************Méthodes d'instance************************* */
 
@@ -94,6 +111,375 @@ class pterodactyl extends eqLogic {
 
   // Fonction exécutée automatiquement après la sauvegarde (création ou mise à jour) de l'équipement
   public function postSave() {
+    $order = 1; // pour avoir toujours le même ordre dans les commandes
+
+    // Nom du serv
+    $info = $this->getCmd(null, 'name');
+    if (!is_object($info)) {
+      $info = new pterodactylCmd();
+      $info->setName(__('Nom', __FILE__));
+    }
+    $info->setOrder($order++);
+    $info->setLogicalId('name');
+    $info->setEqLogic_id($this->getId());
+    $info->setType('info');
+    $info->setSubType('string');
+    $info->setTemplate('dashboard', 'tile');
+    $info->setIsVisible(0);
+    $info->setIsHistorized(0);
+    $info->setDisplay('forceReturnLineBefore', false);
+    $info->save();
+
+    // Node
+    $info = $this->getCmd(null, 'node');
+    if (!is_object($info)) {
+      $info = new pterodactylCmd();
+      $info->setName(__('Node', __FILE__));
+    }
+    $info->setOrder($order++);
+    $info->setLogicalId('node');
+    $info->setEqLogic_id($this->getId());
+    $info->setType('info');
+    $info->setSubType('string');
+    $info->setTemplate('dashboard', 'tile');
+    $info->setIsVisible(1);
+    $info->setIsHistorized(0);
+    $info->setDisplay('forceReturnLineBefore', false);
+    $info->save();
+
+    // Description
+    $info = $this->getCmd(null, 'description');
+    if (!is_object($info)) {
+      $info = new pterodactylCmd();
+      $info->setName(__('Description', __FILE__));
+    }
+    $info->setOrder($order++);
+    $info->setLogicalId('description');
+    $info->setEqLogic_id($this->getId());
+    $info->setType('info');
+    $info->setSubType('string');
+    $info->setTemplate('dashboard', 'default');
+    $info->setIsVisible(1);
+    $info->setIsHistorized(0);
+    $info->setDisplay('forceReturnLineBefore', true);
+    $info->save();
+
+    // ip
+    $info = $this->getCmd(null, 'ip');
+    if (!is_object($info)) {
+      $info = new pterodactylCmd();
+      $info->setName(__('Adresse IP', __FILE__));
+    }
+    $info->setOrder($order++);
+    $info->setLogicalId('ip');
+    $info->setEqLogic_id($this->getId());
+    $info->setType('info');
+    $info->setSubType('string');
+    $info->setTemplate('dashboard', 'tile');
+    $info->setIsVisible(1);
+    $info->setIsHistorized(0);
+    $info->setDisplay('forceReturnLineBefore', true);
+    $info->save();    
+    
+    // ipAlias
+    $info = $this->getCmd(null, 'ipAlias');
+    if (!is_object($info)) {
+      $info = new pterodactylCmd();
+      $info->setName(__('Alias de l\'adresse IP', __FILE__));
+    }
+    $info->setOrder($order++);
+    $info->setLogicalId('ipAlias');
+    $info->setEqLogic_id($this->getId());
+    $info->setType('info');
+    $info->setSubType('string');
+    $info->setTemplate('dashboard', 'default');
+    $info->setIsVisible(0);
+    $info->setIsHistorized(0);
+    $info->setDisplay('forceReturnLineBefore', false);
+    $info->save();
+    
+    // port
+    $info = $this->getCmd(null, 'port');
+    if (!is_object($info)) {
+      $info = new pterodactylCmd();
+      $info->setName(__('Port', __FILE__));
+    }
+    $info->setOrder($order++);
+    $info->setLogicalId('port');
+    $info->setEqLogic_id($this->getId());
+    $info->setType('info');
+    $info->setSubType('string');
+    $info->setTemplate('dashboard', 'tile');
+    $info->setIsVisible(1);
+    $info->setIsHistorized(0);
+    $info->setDisplay('forceReturnLineBefore', false);
+    $info->save();
+    
+    // Uuid
+    $info = $this->getCmd(null, 'uuid');
+    if (!is_object($info)) {
+      $info = new pterodactylCmd();
+      $info->setName(__('Identifiant interne', __FILE__));
+    }
+    $info->setOrder($order++);
+    $info->setLogicalId('uuid');
+    $info->setEqLogic_id($this->getId());
+    $info->setType('info');
+    $info->setSubType('string');
+    $info->setTemplate('dashboard', 'default');
+    $info->setIsVisible(0);
+    $info->setIsHistorized(0);
+    $info->setDisplay('forceReturnLineBefore', true);
+    $info->save();
+    
+    // limitMemory
+    $info = $this->getCmd(null, 'limitMemory');
+    if (!is_object($info)) {
+      $info = new pterodactylCmd();
+      $info->setName(__('Limite Mémoire', __FILE__));
+    }
+    $info->setOrder($order++);
+    $info->setLogicalId('limitMemory');
+    $info->setEqLogic_id($this->getId());
+    $info->setType('info');
+    $info->setSubType('string');
+    $info->setTemplate('dashboard', 'default');
+    $info->setIsVisible(0);
+    $info->setIsHistorized(0);
+    $info->setDisplay('forceReturnLineBefore', true);
+    $info->save();
+
+    // limitSwap
+    $info = $this->getCmd(null, 'limitSwap');
+    if (!is_object($info)) {
+      $info = new pterodactylCmd();
+      $info->setName(__('Limite Swap', __FILE__));
+    }
+    $info->setOrder($order++);
+    $info->setLogicalId('limitSwap');
+    $info->setEqLogic_id($this->getId());
+    $info->setType('info');
+    $info->setSubType('string');
+    $info->setTemplate('dashboard', 'default');
+    $info->setIsVisible(0);
+    $info->setIsHistorized(0);
+    $info->setDisplay('forceReturnLineBefore', true);
+    $info->save();
+    
+    // limitDisk
+    $info = $this->getCmd(null, 'limitDisk');
+    if (!is_object($info)) {
+      $info = new pterodactylCmd();
+      $info->setName(__('Limite Disk', __FILE__));
+    }
+    $info->setOrder($order++);
+    $info->setLogicalId('limitDisk');
+    $info->setEqLogic_id($this->getId());
+    $info->setType('info');
+    $info->setSubType('string');
+    $info->setTemplate('dashboard', 'default');
+    $info->setIsVisible(0);
+    $info->setIsHistorized(0);
+    $info->setDisplay('forceReturnLineBefore', true);
+    $info->save();
+        
+    // limitIo
+    $info = $this->getCmd(null, 'limitIo');
+    if (!is_object($info)) {
+      $info = new pterodactylCmd();
+      $info->setName(__('Limite IO', __FILE__));
+    }
+    $info->setOrder($order++);
+    $info->setLogicalId('limitIo');
+    $info->setEqLogic_id($this->getId());
+    $info->setType('info');
+    $info->setSubType('string');
+    $info->setTemplate('dashboard', 'default');
+    $info->setIsVisible(0);
+    $info->setIsHistorized(0);
+    $info->setDisplay('forceReturnLineBefore', true);
+    $info->save();
+        
+    // limitCpu
+    $info = $this->getCmd(null, 'limitCpu');
+    if (!is_object($info)) {
+      $info = new pterodactylCmd();
+      $info->setName(__('Limite CPU', __FILE__));
+    }
+    $info->setOrder($order++);
+    $info->setLogicalId('limitCpu');
+    $info->setEqLogic_id($this->getId());
+    $info->setType('info');
+    $info->setSubType('string');
+    $info->setTemplate('dashboard', 'default');
+    $info->setIsVisible(0);
+    $info->setIsHistorized(0);
+    $info->setDisplay('forceReturnLineBefore', false);
+    $info->save();
+        
+    // limitThreads
+    $info = $this->getCmd(null, 'limitThreads');
+    if (!is_object($info)) {
+      $info = new pterodactylCmd();
+      $info->setName(__('Limite Threads', __FILE__));
+    }
+    $info->setOrder($order++);
+    $info->setLogicalId('limitThreads');
+    $info->setEqLogic_id($this->getId());
+    $info->setType('info');
+    $info->setSubType('string');
+    $info->setTemplate('dashboard', 'default');
+    $info->setIsVisible(0);
+    $info->setIsHistorized(0);
+    $info->setDisplay('forceReturnLineBefore', true);
+    $info->save();
+    
+    
+   // ========= Informations supplémentaires via resources ======== //
+
+    // currentState
+    $info = $this->getCmd(null, 'currentState');
+    if (!is_object($info)) {
+      $info = new pterodactylCmd();
+      $info->setName(__('Statut', __FILE__));
+    }
+    $info->setOrder($order++);
+    $info->setLogicalId('currentState');
+    $info->setEqLogic_id($this->getId());
+    $info->setType('info');
+    $info->setSubType('string');
+    $info->setTemplate('dashboard', 'tile');
+    $info->setIsVisible(1);
+    $info->setIsHistorized(1);
+    $info->setConfiguration("historyPurge", "-3 months");
+    $info->setDisplay('forceReturnLineBefore', true);
+    $info->save();
+
+    // isSuspended
+    $info = $this->getCmd(null, 'isSuspended');
+    if (!is_object($info)) {
+      $info = new mideawifiCmd();
+      $info->setName(__('Etat Suspendu', __FILE__));
+    }
+    $info->setOrder($order++);
+    $info->setLogicalId('isSuspended');
+    $info->setEqLogic_id($this->getId());
+    $info->setType('info');
+    $info->setTemplate('dashboard', 'default'); //template pour le dashboard
+    $info->setSubType('binary');
+    $info->setIsVisible(0);
+    $info->setIsHistorized(1);
+    $info->setConfiguration("historyPurge", "-3 months");
+    $info->setDisplay('forceReturnLineBefore', true);
+    $info->save();
+    
+    // memoryBytes
+    $info = $this->getCmd(null, 'memoryBytes');
+    if (!is_object($info)) {
+      $info = new pterodactylCmd();
+      $info->setName(__('memory bytes', __FILE__));
+    }
+    $info->setOrder($order++);
+    $info->setLogicalId('memoryBytes');
+    $info->setEqLogic_id($this->getId());
+    $info->setType('info');
+    $info->setSubType('string');
+    $info->setTemplate('dashboard', 'default');
+    $info->setUnite('Mo');
+    $info->setIsVisible(1);
+    $info->setIsHistorized(1);
+    $info->setConfiguration("historyPurge", "-1 month");
+    $info->setDisplay('forceReturnLineBefore', true);
+    $info->save();
+    
+    // cpuAbsolute
+    $info = $this->getCmd(null, 'cpuAbsolute');
+    if (!is_object($info)) {
+      $info = new pterodactylCmd();
+      $info->setName(__('cpu absolute', __FILE__));
+    }
+    $info->setOrder($order++);
+    $info->setLogicalId('cpuAbsolute');
+    $info->setEqLogic_id($this->getId());
+    $info->setType('info');
+    $info->setSubType('string');
+    $info->setTemplate('dashboard', 'default');
+    $info->setIsVisible(0);
+    $info->setIsHistorized(1);
+    $info->setConfiguration("historyPurge", "-1 month");
+    $info->setDisplay('forceReturnLineBefore', false);
+    $info->save();
+
+    // diskBytes
+    $info = $this->getCmd(null, 'diskBytes');
+    if (!is_object($info)) {
+      $info = new pterodactylCmd();
+      $info->setName(__('disk bytes', __FILE__));
+    }
+    $info->setOrder($order++);
+    $info->setLogicalId('diskBytes');
+    $info->setEqLogic_id($this->getId());
+    $info->setType('info');
+    $info->setSubType('string');
+    $info->setTemplate('dashboard', 'default');
+    $info->setUnite('Mo');
+    $info->setIsVisible(1);
+    $info->setIsHistorized(1);
+    $info->setConfiguration("historyPurge", "-1 month");
+    $info->setDisplay('forceReturnLineBefore', false);
+    $info->save();
+
+
+    // networkRxBytes
+    $info = $this->getCmd(null, 'networkRxBytes');
+    if (!is_object($info)) {
+      $info = new pterodactylCmd();
+      $info->setName(__('networkRxBytes', __FILE__));
+    }
+    $info->setOrder($order++);
+    $info->setLogicalId('networkRxBytes');
+    $info->setEqLogic_id($this->getId());
+    $info->setType('info');
+    $info->setSubType('string');
+    $info->setTemplate('dashboard', 'default');
+    $info->setUnite('Ko/s');
+    $info->setIsVisible(1);
+    $info->setIsHistorized(1);
+    $info->setConfiguration("historyPurge", "-1 month");
+    $info->setDisplay('forceReturnLineBefore', false);
+    $info->save();
+
+    // networkTxBytes
+    $info = $this->getCmd(null, 'networkTxBytes');
+    if (!is_object($info)) {
+      $info = new pterodactylCmd();
+      $info->setName(__('networkTxBytes', __FILE__));
+    }
+    $info->setOrder($order++);
+    $info->setLogicalId('networkTxBytes');
+    $info->setEqLogic_id($this->getId());
+    $info->setType('info');
+    $info->setSubType('string');
+    $info->setTemplate('dashboard', 'default');
+    $info->setUnite('Ko/s');
+    $info->setIsVisible(1);
+    $info->setIsHistorized(1);
+    $info->setConfiguration("historyPurge", "-1 month");
+    $info->setDisplay('forceReturnLineBefore', false);
+    $info->save();
+    
+	// rafraichir
+	$refresh = $this->getCmd(null, 'refresh');
+	if (!is_object($refresh)) {
+		$refresh = new mideawifiCmd();
+		$refresh->setName(__('Rafraîchir', __FILE__));
+	}
+    $refresh->setOrder($order++);
+	$refresh->setEqLogic_id($this->getId());
+	$refresh->setLogicalId('refresh');
+	$refresh->setType('action');
+	$refresh->setSubType('other');
+	$refresh->save();
   }
 
   // Fonction exécutée automatiquement avant la suppression de l'équipement
@@ -138,7 +524,66 @@ class pterodactyl extends eqLogic {
   */
 
   /*     * **********************Getteur Setteur*************************** */
+  	public function updateMainInfos() {
+    	$identifier = $this->getLogicalId();
+      	$p = new pterodactylApi(config::byKey('apiKey', 'pterodactyl'), config::byKey('urlRoot', 'pterodactyl'));
+      	$details = $p->getServerDetails($identifier);
+      	//log::add('pterodactyl', 'debug', "Détail du serveur: " . $identifier . ": " . json_encode($details));
+      	log::add('pterodactyl', 'debug', "Détail du serveur: " . json_encode($details->attributes));
+      	$name = 		$details->attributes->name;
+      	$node = 		$details->attributes->node;
+      	$description = 	$details->attributes->description;
+      	$uuid = 		$details->attributes->uuid;
+      	log::add('pterodactyl', 'debug', "Détail du serveur name: " .$name . $node . $description);
+      	$limitMemory = 	$details->attributes->limits->memory;
+      	$limitSwap = 	$details->attributes->limits->swap;
+      	$limitDisk = 	$details->attributes->limits->disk;
+      	$limitIo = 		$details->attributes->limits->io;
+      	$limitCpu = 	$details->attributes->limits->cpu;
+      	$limitThreads = $details->attributes->limits->threads;
+      	$ip = 			$details->attributes->relationships->allocations->data[0]->attributes->ip;
+      	$ipAlias =		$details->attributes->relationships->allocations->data[0]->attributes->ipAlias;
+      	$port = 		$details->attributes->relationships->allocations->data[0]->attributes->port;
 
+      	$this->checkAndUpdateCmd("name", $name);
+      	$this->checkAndUpdateCmd("node", $node);
+      	$this->checkAndUpdateCmd("description", $description);
+      	$this->checkAndUpdateCmd("uuid", $uuid);
+      	$this->checkAndUpdateCmd("ip", $ip);
+      	$this->checkAndUpdateCmd("ipAlias", $ipAlias);
+      	$this->checkAndUpdateCmd("port", $port);
+	    $this->checkAndUpdateCmd("limitMemory", round(($limitMemory/1024/1024), 2));
+	    $this->checkAndUpdateCmd("limitSwap", round(($limitSwap/1024/1024), 2));
+	    $this->checkAndUpdateCmd("limitDisk", round(($limitDisk/1024/1024), 2));
+	    $this->checkAndUpdateCmd("limitIo", $limitIo);
+      	$this->checkAndUpdateCmd("limitCpu", $limitCpu);
+        $this->checkAndUpdateCmd("limitThreads", $limitThreads);	
+      	
+    }
+  
+	public function updateInfos() {
+    	$identifier = $this->getLogicalId();
+      	$p = new pterodactylApi(config::byKey('apiKey', 'pterodactyl'), config::byKey('urlRoot', 'pterodactyl'));
+      	$resources = $p->getResourcesUsage($identifier);
+      	//log::add('pterodactyl', 'debug', "Détail du serveur: " . $identifier . ": " . json_encode($resources));
+      
+      	$currentState = 	$resources->attributes->current_state;
+      	$isSuspended = 		$resources->attributes->is_suspended;
+      	$memoryBytes = 		$resources->attributes->resources->memory_bytes;
+	    $cpuAbsolute = 		$resources->attributes->resources->cpu_absolute;
+	    $diskBytes = 		$resources->attributes->resources->disk_bytes;
+	    $networkRxBytes = 	$resources->attributes->resources->network_rx_bytes;
+      	$networkTxBytes = 	$resources->attributes->resources->network_tx_bytes;
+      
+      	$this->checkAndUpdateCmd("currentState", $currentState);
+      	$this->checkAndUpdateCmd("isSuspended", $isSuspended);
+	    $this->checkAndUpdateCmd("memoryBytes", round(($memoryBytes/1024/1024), 2));
+	    $this->checkAndUpdateCmd("cpuAbsolute", $cpuAbsolute);
+	    $this->checkAndUpdateCmd("diskBytes", round(($diskBytes/1024/1024), 2));
+	    $this->checkAndUpdateCmd("networkRxBytes", round(($networkRxBytes/1024), 2));
+      	$this->checkAndUpdateCmd("networkTxBytes", round(($networkTxBytes/1024), 2));
+      
+    }
 }
 
 class pterodactylCmd extends cmd {
@@ -162,8 +607,28 @@ class pterodactylCmd extends cmd {
 
   // Exécution d'une commande
   public function execute($_options = array()) {
+    $eqLogic = $this->getEqLogic(); // Récupération de l’eqlogic
+	
+    switch ($this->getLogicalId()) {
+		case 'refresh': 
+        	$eqLogic->updateMainInfos();
+			$eqLogic->updateInfos();
+			break;
+		default:
+			throw new Error('This should not append!');
+			log::add('pterodactyl', 'warn', 'Error while executing cmd ' . $this->getLogicalId());
+			break;
+    }
+    
+    
+    return;
   }
 
+  /*
+  	$p = new pterodactylApi("ptlc_UiFSIpubpT4wJemfTIISTwboCVZQWSkvHOwNRrIMXzv", "https://panel.illimity.fr");
+
+	$srvDetails = $p->getListServers();
+  */
   /*     * **********************Getteur Setteur*************************** */
 
 }

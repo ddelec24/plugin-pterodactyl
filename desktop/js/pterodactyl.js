@@ -32,6 +32,7 @@ function addCmdToTable(_cmd) {
   if (!isset(_cmd.configuration)) {
     _cmd.configuration = {}
   }
+    
   var tr = '<tr class="cmd" data-cmd_id="' + init(_cmd.id) + '">'
   tr += '<td class="hidden-xs">'
   tr += '<span class="cmdAttr" data-l1key="id"></span>'
@@ -81,4 +82,109 @@ function addCmdToTable(_cmd) {
       jeedom.cmd.changeType(tr, init(_cmd.subType))
     }
   })
+}
+
+$('.eqLogicAttr[data-l1key=configuration][data-l2key=type]').on('change',function(){
+  	console.log('chargement ici');
+    type = $(this).value()
+    if (type == 'bobo')
+    {
+        $("span[data-cmd_id='Firmware']").html('bibi')
+        $("div[data-cmd_id='Firmware']").show()
+    }
+});
+
+function printEqLogic(_eqLogic) {
+  console.log(infosPteroServ);
+  let eqLogic = _eqLogic.id;
+  console.log("eqlogic: " + eqLogic);
+  console.log(infosPteroServ[eqLogic]);
+  $('#namePteroServ').html(infosPteroServ[eqLogic]['nomnode']);
+  $('#uuidPteroServ').html(infosPteroServ[eqLogic]['uuid']);
+  $('#portPteroServ').html(infosPteroServ[eqLogic]['ipport']);
+  $('#graphPteroServ').html("ICI graphique des 30 dernières minutes par exemple?");
+  /*jeedom.cmd.update[_eqLogic] = function(_options) {
+    console.log(_eqLogic.id + '=>' + _options.display_value)
+  	$('.cmd[data-cmd_id=' + _eqLogic.id + '] .form-control[data-key=value]').value(_options.display_value);
+  }*/
+ // jeedom.cmd.update[cmd_id]
+  //console.log("============");
+  //console.log(_options);
+  /*console.log(_eqLogic);
+  let arrayCmd = _eqLogic.cmd;
+  let eqName = arrayCmd.find(o => o.logicalId === 'name');
+  console.log("2======");
+  console.log(eqName.id);
+  console.log(jeedom.cmd.cache.byId[eqName.id]);
+  $('#namePteroServ').html(_eqLogic.cmd + " sur le node " + _eqLogic.node);
+  $('#uuidPteroServ').html(_eqLogic.uuid);
+  $('#portPteroServ').html(_eqLogic.ip + ":" + _eqLogic.port);
+  $('#graphPteroServ').html("ICI graphique des 30 dernières minutes par exemple?");*/
+}
+
+$('.eqLogicAction[data-action=sync]').on('click', function() {
+	$('.eqLogicAction span:first').text("{{Synchronisation en cours...}}").css({'color' : 'red'});
+	$('.eqLogicAction i:first').css({'color' : 'red'});
+	runSync();
+});
+
+function runSync() {
+	console.log('=== Sync in progress ===');
+
+	$.ajax({
+		type: 'POST',
+		url: 'plugins/pterodactyl/core/ajax/pterodactyl.ajax.php',
+		data: {
+			action: 'sync'
+		},
+		dataType: 'json',
+		error: function (request, status, error) {
+			handleAjaxError(request, status, error);
+		},
+		success: function (data) {
+			$('.eqLogicAction span:first').text("{{Synchronisation automatique}}").removeAttr('style');
+			$('.eqLogicAction i:first').removeAttr('style');
+			if (data.state != 'ok') {
+				$('#div_alert').showAlert({message: data.result, level: 'danger'});
+				return;
+			}
+			console.log(data);
+
+			if(data.result.new == 0){
+				$('#div_results').empty().append("<center><span style='color:#767676;font-size:1.2em;font-weight: bold;'>{{Aucun serveur trouvé, vérifiez les paramètres dans la configuration et cliquez sur \"Synchroniser\"}}</span></center>");
+				return;
+			} else {
+				var plurilizedNewServers = (data.result.new == 1) ? "Nouveau serveur détecté" : "Nouveaux serveurs détectés";
+				$('#div_results').empty().append("<center><span style='color:#767676;font-size:1.2em;font-weight: bold;'> " + data.result.new + "{{ " + plurilizedNewServers + "}}</span></center>");
+			}
+
+
+			// create div container for results
+			$("#div_results").append('<div class="eqLogicThumbnailContainer" id="newServersDetected" style="position: relative; height: 173px;"></div>');
+
+			var html = '';
+			var currentLeft = 0;
+			for (var i in data.result.servers) {
+
+
+				html += '<div class="eqLogicDisplayCard cursor " data-eqlogic_id="' + data.result.servers[i].eqlogic + '" style="position: absolute; left: ' + currentLeft + 'px; top: 0px;"">';
+				html += '<a href="index.php?v=d&m=pterodactyl&p=pterodactyl&id=' + data.result.servers[i].eqlogic + '">';
+				html += '<img src="plugins/pterodactyl/plugin_info/pterodactyl_icon.png"><br>';
+				html += '<span class="name">';
+				html += '<span class="label labelObjectHuman" style="text-shadow : none;">Aucun</span><br>';
+				html += '<strong>' + data.result.servers[i].name + '</strong>';
+				html += '</span>';
+				html += '</a>';
+				html += '</div>';
+				currentLeft += 130;
+			}
+
+			$('#newServersDetected').append(html);
+		},
+		done: function(data) {
+			console.log('=== Pterodactyl Sync finished ===');
+		}
+	});
+
+
 }

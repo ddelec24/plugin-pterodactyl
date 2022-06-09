@@ -6,18 +6,43 @@ if (!isConnect('admin')) {
 $plugin = plugin::byId('pterodactyl');
 sendVarToJS('eqType', $plugin->getId());
 $eqLogics = eqLogic::byType($plugin->getId());
+$infosPteroServ = [];
+foreach ($eqLogics as $eqLogic) {
+  	$current = [];
+  	$name = $eqLogic->getCmd(null, 'name');
+  	$name = $name->execCmd();
+  	$node = $eqLogic->getCmd(null, 'node');
+  	$node = $node->execCmd();
+    $uuid = $eqLogic->getCmd(null, 'uuid');
+  	$uuid = $uuid->execCmd();
+    $ip = $eqLogic->getCmd(null, 'ip');
+  	$ip = $ip->execCmd();
+    $port = $eqLogic->getCmd(null, 'port');
+  	$port = $port->execCmd();
+  	$current["nomnode"] = $name . " / node " . $node;
+  	$current["uuid"] = $uuid;
+  	$current["ipport"] = $ip . ":" . $port;
+	$infosPteroServ[$eqLogic->getId()] = $current;
+}
+sendVarToJS('infosPteroServ', $infosPteroServ);
+
 ?>
 
 <div class="row row-overflow">
-	<!-- Page d'accueil du plugin -->
+	<!-- Page daccueil du plugin -->
 	<div class="col-xs-12 eqLogicThumbnailDisplay">
 		<legend><i class="fas fa-cog"></i>  {{Gestion}}</legend>
 		<!-- Boutons de gestion du plugin -->
 		<div class="eqLogicThumbnailContainer">
-			<div class="cursor eqLogicAction logoPrimary" data-action="add">
+  			<div class="cursor eqLogicAction logoPrimary" data-action="sync">
+				<i class="fas fa-sync"></i>
+				<br>
+				<span>{{Synchronisation automatique}}</span>
+			</div>
+			<div class="cursor eqLogicAction" data-action="add">
 				<i class="fas fa-plus-circle"></i>
 				<br>
-				<span>{{Ajouté un serveur}}</span>
+				<span>{{Ajouter un serveur manuellement}}</span>
 			</div>
 			<div class="cursor eqLogicAction logoSecondary" data-action="gotoPluginConf">
 				<i class="fas fa-wrench"></i>
@@ -28,7 +53,7 @@ $eqLogics = eqLogic::byType($plugin->getId());
 		<legend><i class="fas fa-table"></i> {{le(s) serveur(s)}}</legend>
 		<?php
 		if (count($eqLogics) == 0) {
-			echo '<br><div class="text-center" style="font-size:1.2em;font-weight:bold;">{{Aucun équipement Template trouvé, cliquer sur "Ajouter" pour commencer}}</div>';
+			echo '<br><div id="div_results" class="text-center" style="font-size:1.2em;font-weight:bold;">{{Aucun serveur trouvé, cliquer sur "Synchroniser" pour commencer}}</div>';
 		} else {
 			// Champ de recherche
 			echo '<div class="input-group" style="margin:5px;">';
@@ -39,7 +64,8 @@ $eqLogics = eqLogic::byType($plugin->getId());
 			echo '</div>';
 			echo '</div>';
 			// Liste des équipements du plugin
-			echo '<div class="eqLogicThumbnailContainer">';
+          	echo '<div id="div_results"></div>';
+			echo '<div class="eqLogicThumbnailContainer">';            
 			foreach ($eqLogics as $eqLogic) {
 				$opacity = ($eqLogic->getIsEnable()) ? '' : 'disableCard';
 				echo '<div class="eqLogicDisplayCard cursor '.$opacity.'" data-eqLogic_id="' . $eqLogic->getId() . '">';
@@ -54,6 +80,7 @@ $eqLogics = eqLogic::byType($plugin->getId());
 			echo '</div>';
 		}
 		?>
+    
 	</div> <!-- /.eqLogicThumbnailDisplay -->
 
 	<!-- Page de présentation de l'équipement -->
@@ -125,41 +152,7 @@ $eqLogics = eqLogic::byType($plugin->getId());
 									<label class="checkbox-inline"><input type="checkbox" class="eqLogicAttr" data-l1key="isVisible" checked>{{Visible}}</label>
 								</div>
 							</div>
-
-							<legend><i class="fas fa-cogs"></i> {{Paramètres spécifiques}}</legend>
-							<div class="form-group">
-								<label class="col-sm-4 control-label">{{Nom du paramètre n°1}}
-									<sup><i class="fas fa-question-circle tooltips" title="{{Renseignez le paramètre n°1 de l'équipement}}"></i></sup>
-								</label>
-								<div class="col-sm-6">
-									<input type="text" class="eqLogicAttr form-control" data-l1key="configuration" data-l2key="param1" placeholder="{{Paramètre n°1}}">
-								</div>
-							</div>
-							<div class="form-group">
-								<label class="col-sm-4 control-label"> {{Mot de passe}}
-									<sup><i class="fas fa-question-circle tooltips" title="{{Renseignez le mot de passe}}"></i></sup>
-								</label>
-								<div class="col-sm-6">
-									<input type="text" class="eqLogicAttr form-control inputPassword" data-l1key="configuration" data-l2key="password">
-								</div>
-							</div>
-							<!-- Exemple de champ de saisie du cron d'auto-actualisation avec assistant -->
-							<!-- La fonction cron de la classe du plugin doit contenir le code prévu pour que ce champ soit fonctionnel -->
-							<div class="form-group">
-								<label class="col-sm-4 control-label">{{Auto-actualisation}}
-									<sup><i class="fas fa-question-circle tooltips" title="{{Fréquence de rafraîchissement des commandes infos de l'équipement}}"></i></sup>
-								</label>
-								<div class="col-sm-6">
-									<div class="input-group">
-										<input type="text" class="eqLogicAttr form-control roundedLeft" data-l1key="configuration" data-l2key="autorefresh" placeholder="{{Cliquer sur ? pour afficher l'assistant cron}}">
-										<span class="input-group-btn">
-											<a class="btn btn-default cursor jeeHelper roundedRight" data-helper="cron" title="Assistant cron">
-												<i class="fas fa-question-circle"></i>
-											</a>
-										</span>
-									</div>
-								</div>
-							</div>
+                            
 						</div>
 
 						<!-- Partie droite de l'onglet "Équipement" -->
@@ -167,9 +160,27 @@ $eqLogics = eqLogic::byType($plugin->getId());
 						<div class="col-lg-6">
 							<legend><i class="fas fa-info"></i> {{Informations}}</legend>
 							<div class="form-group">
-								<label class="col-sm-4 control-label">{{Description}}</label>
+								<label class="col-sm-4 control-label">{{Nom sur le serveur et Node}}</label>
 								<div class="col-sm-6">
-									<textarea class="form-control eqLogicAttr autogrow" data-l1key="comment"></textarea>
+									<div class="form-group cmdAttr label label-primary" id="namePteroServ" style="font-size : 1em">XXX</div>
+								</div>
+							</div>
+							<div class="form-group">
+								<label class="col-sm-4 control-label">UUID</label>
+								<div class="col-sm-6">
+									<div class="form-group cmdAttr label label-primary" id="uuidPteroServ" style="font-size : 1em">XXX</div>
+								</div>
+							</div>
+							<div class="form-group">
+								<label class="col-sm-4 control-label">{{IP et Port}}</label>
+								<div class="col-sm-6">
+									<div class="form-group cmdAttr label label-primary" id="portPteroServ" style="font-size : 1em">XXX</div>
+								</div>
+							</div>
+							<div class="form-group">
+								<label class="col-sm-4 control-label">{{Graphique de performances}}</label>
+								<div class="col-sm-6">
+									<div class="form-group cmdAttr label label-primary" id="graphPteroServ" style="font-size : 1em">XXX</div>
 								</div>
 							</div>
 						</div>

@@ -15,7 +15,7 @@
 	},
 	"licence" : "AGPL",
 	"author" : "MrJuJu0319",
-	"require" : "4.2.18",
+	"require" : "4.2.16",
 	"category" : "monitoring",
 	"hasDependency" : false,
 	"hasOwnDeamon" : false,
