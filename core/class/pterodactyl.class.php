@@ -526,7 +526,7 @@ class pterodactyl extends eqLogic {
   /*     * **********************Getteur Setteur*************************** */
   	public function updateMainInfos() {
     	$identifier = $this->getLogicalId();
-      	$p = new pterodactylApi(config::byKey('apiKey', 'pterodactyl'), config::byKey('pteroRootUrl', 'pterodactyl'));
+      	$p = new pterodactylApi(config::byKey('apiKey', 'pterodactyl'), config::byKey('pteroRootUrl', 'pterodactyl'), config::byKey('iAmAdmin', 'pterodactyl'));
       	$details = $p->getServerDetails($identifier);
       	//log::add('pterodactyl', 'debug', "Détail du serveur: " . $identifier . ": " . json_encode($details));
       	log::add('pterodactyl', 'debug', "Détail du serveur: " . json_encode($details->attributes));
@@ -563,7 +563,7 @@ class pterodactyl extends eqLogic {
   
 	public function updateInfos() {
     	$identifier = $this->getLogicalId();
-      	$p = new pterodactylApi(config::byKey('apiKey', 'pterodactyl'), config::byKey('pteroRootUrl', 'pterodactyl'));
+      	$p = new pterodactylApi(config::byKey('apiKey', 'pterodactyl'), config::byKey('pteroRootUrl', 'pterodactyl'), config::byKey('iAmAdmin', 'pterodactyl'));
       	$resources = $p->getResourcesUsage($identifier);
       	//log::add('pterodactyl', 'debug', "Détail du serveur: " . $identifier . ": " . json_encode($resources));
       
@@ -624,11 +624,6 @@ class pterodactylCmd extends cmd {
     return;
   }
 
-  /*
-  	$p = new pterodactylApi("ptlc_UiFSIpubpT4wJemfTIISTwboCVZQWSkvHOwNRrIMXzv", "https://panel.illimity.fr");
-
-	$srvDetails = $p->getListServers();
-  */
   /*     * **********************Getteur Setteur*************************** */
 
 }
