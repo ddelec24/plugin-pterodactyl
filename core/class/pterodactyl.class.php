@@ -244,6 +244,7 @@ class pterodactyl extends eqLogic {
     $info->setType('info');
     $info->setSubType('string');
     $info->setTemplate('dashboard', 'default');
+    $info->setUnite('Go');
     $info->setIsVisible(0);
     $info->setIsHistorized(0);
     $info->setDisplay('forceReturnLineBefore', true);
@@ -261,6 +262,7 @@ class pterodactyl extends eqLogic {
     $info->setType('info');
     $info->setSubType('string');
     $info->setTemplate('dashboard', 'default');
+    $info->setUnite('Go');
     $info->setIsVisible(0);
     $info->setIsHistorized(0);
     $info->setDisplay('forceReturnLineBefore', true);
@@ -278,6 +280,7 @@ class pterodactyl extends eqLogic {
     $info->setType('info');
     $info->setSubType('string');
     $info->setTemplate('dashboard', 'default');
+    $info->setUnite('Go');
     $info->setIsVisible(0);
     $info->setIsHistorized(0);
     $info->setDisplay('forceReturnLineBefore', true);
@@ -377,7 +380,7 @@ class pterodactyl extends eqLogic {
     $info = $this->getCmd(null, 'memoryBytes');
     if (!is_object($info)) {
       $info = new pterodactylCmd();
-      $info->setName(__('memory bytes', __FILE__));
+      $info->setName(__('Mémoire RAM utilisée', __FILE__));
     }
     $info->setOrder($order++);
     $info->setLogicalId('memoryBytes');
@@ -385,7 +388,7 @@ class pterodactyl extends eqLogic {
     $info->setType('info');
     $info->setSubType('string');
     $info->setTemplate('dashboard', 'default');
-    $info->setUnite('Mo');
+    $info->setUnite('Go');
     $info->setIsVisible(1);
     $info->setIsHistorized(1);
     $info->setConfiguration("historyPurge", "-1 month");
@@ -414,7 +417,7 @@ class pterodactyl extends eqLogic {
     $info = $this->getCmd(null, 'diskBytes');
     if (!is_object($info)) {
       $info = new pterodactylCmd();
-      $info->setName(__('disk bytes', __FILE__));
+      $info->setName(__('Espace disque utilisé', __FILE__));
     }
     $info->setOrder($order++);
     $info->setLogicalId('diskBytes');
@@ -422,7 +425,7 @@ class pterodactyl extends eqLogic {
     $info->setType('info');
     $info->setSubType('string');
     $info->setTemplate('dashboard', 'default');
-    $info->setUnite('Mo');
+    $info->setUnite('Go');
     $info->setIsVisible(1);
     $info->setIsHistorized(1);
     $info->setConfiguration("historyPurge", "-1 month");
@@ -621,10 +624,10 @@ class pterodactyl extends eqLogic {
       	$this->checkAndUpdateCmd("ip", $ip);
       	$this->checkAndUpdateCmd("ipAlias", $ipAlias);
       	$this->checkAndUpdateCmd("port", $port);
-	$this->checkAndUpdateCmd("limitMemory", round(($limitMemory/1024/1024), 2));
-	$this->checkAndUpdateCmd("limitSwap", round(($limitSwap/1024/1024), 2));
-	$this->checkAndUpdateCmd("limitDisk", round(($limitDisk/1024/1024), 2));
-	$this->checkAndUpdateCmd("limitIo", $limitIo);
+		$this->checkAndUpdateCmd("limitMemory", round(($limitMemory/1024/1024/1024), 3));
+		$this->checkAndUpdateCmd("limitSwap", round(($limitSwap/1024/1024/1024), 3));
+		$this->checkAndUpdateCmd("limitDisk", round(($limitDisk/1024/1024/1024), 3));
+		$this->checkAndUpdateCmd("limitIo", $limitIo);
       	$this->checkAndUpdateCmd("limitCpu", $limitCpu);
         $this->checkAndUpdateCmd("limitThreads", $limitThreads);	
       	
@@ -639,17 +642,17 @@ class pterodactyl extends eqLogic {
       	$currentState = 	$resources->attributes->current_state;
       	$isSuspended = 		$resources->attributes->is_suspended;
       	$memoryBytes = 		$resources->attributes->resources->memory_bytes;
-	$cpuAbsolute = 		$resources->attributes->resources->cpu_absolute;
-	$diskBytes = 		$resources->attributes->resources->disk_bytes;
-	$networkRxBytes = 	$resources->attributes->resources->network_rx_bytes;
+		$cpuAbsolute = 		$resources->attributes->resources->cpu_absolute;
+		$diskBytes = 		$resources->attributes->resources->disk_bytes;
+		$networkRxBytes = 	$resources->attributes->resources->network_rx_bytes;
       	$networkTxBytes = 	$resources->attributes->resources->network_tx_bytes;
       
       	$this->checkAndUpdateCmd("currentState", $currentState);
       	$this->checkAndUpdateCmd("isSuspended", $isSuspended);
-	$this->checkAndUpdateCmd("memoryBytes", round(($memoryBytes/1024/1024), 2));
-	$this->checkAndUpdateCmd("cpuAbsolute", $cpuAbsolute);
-	$this->checkAndUpdateCmd("diskBytes", round(($diskBytes/1024/1024), 2));
-	$this->checkAndUpdateCmd("networkRxBytes", round(($networkRxBytes/1024), 2));
+		$this->checkAndUpdateCmd("memoryBytes", round(($memoryBytes/1024/1024/1024), 3));
+		$this->checkAndUpdateCmd("cpuAbsolute", $cpuAbsolute);
+		$this->checkAndUpdateCmd("diskBytes", round(($diskBytes/1024/1024/1024), 3));
+		$this->checkAndUpdateCmd("networkRxBytes", round(($networkRxBytes/1024), 2));
       	$this->checkAndUpdateCmd("networkTxBytes", round(($networkTxBytes/1024), 2));
       
     }
