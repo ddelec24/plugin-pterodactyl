@@ -71,7 +71,3 @@ class pterodactylApi {
 		return $this->sendRequest($endpoint);
 	}
 }
-
-
-
-//print_r($srvDetails);
