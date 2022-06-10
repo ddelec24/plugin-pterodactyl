@@ -7,15 +7,20 @@
     $('.cmd[data-cmd_uid=#uid#]:last .action').off('click').on('click', function () {
     if("#logicalId#" != "start") {
       
-      let confirmedAction = confirm("Voulez-vous vraiment #name_display# le serveur ?" );
-      if(!confirmedAction)
-          return false;
-    }
-      $('#div_alert').showAlert({
-        message: "L'action demandée a été prise en compte, merci de patienter...",
-        level: 'success'
+      	bootbox.confirm("Voulez-vous vraiment #name_display# le serveur ?" , function(confirmedAction) {
+        if(confirmedAction) {
+          $('#div_alert').showAlert({
+            message: "L'action demandée a été prise en compte, merci de patienter...",
+            level: 'success'
+          });
+          jeedom.cmd.execute({id: '#id#'});
+      	}
       });
-      jeedom.cmd.execute({id: '#id#'})
+
+    } else {
+    	jeedom.cmd.execute({id: '#id#'});
+    }
+
     })
 
     if ($('.cmd[data-cmd_uid=#uid#]').last().prev().data('subtype') != undefined && $('.cmd[data-cmd_id=#id#]').last().prev().data('subtype') != 'other'
