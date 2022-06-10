@@ -1,32 +1,22 @@
 {
 	"id" : "pterodactyl",
 	"name" : "Pterodactyl",
-	"specialAttributes" : {
-		"object" : {
-			"toto" : {"name" : {"fr_FR" : "Plop je suis un attribut spécial"},"type" : "input"},
-			"toto2" : {"name" : {"fr_FR" : "Plop je suis un attribut spécial number"},"type" : "number"}
-		},
-		"user" : {
-			"toto" : {"name" : {"fr_FR" : "Plop je suis un attribut spécial"},"type" : "select","values" : [{"value" : "1", "name" : "valeur 1"},{"value" : "plop", "name" : "valeur plop"}]}
-		}
-	},
 	"description" : {
-		"fr_FR": "Gestion de serveur Pterodactyl"
+		"fr_FR": "Gestion de serveur Pterodactyl (Rust, Minecraft, ARk etc...)"
 	},
 	"licence" : "AGPL",
-	"author" : "MrJuJu0319",
+	"author" : "DDelec24/MrJuJu0319",
 	"require" : "4.2.16",
 	"category" : "monitoring",
 	"hasDependency" : false,
 	"hasOwnDeamon" : false,
 	"maxDependancyInstallTime" : 0,
-	"changelog" : "https://jeedom.github.io/plugin-template/#language#/changelog",
-	"documentation" : "https://jeedom.github.io/plugin-template/#language#/",
-	"changelog_beta" : "https://jeedom.github.io/plugin-template/#language#/beta/changelog",
-	"documentation_beta" : "https://jeedom.github.io/plugin-template/#language#/beta/",
+	"changelog" : "https://ddelec24.github.io/plugin-pterodactyl/#language#/changelog",
+	"documentation" : "https://ddelec24.github.io/plugin-pterodactyl/#language#/",
+	"changelog_beta" : "https://ddelec24.github.io/plugin-pterodactyl/#language#/beta/changelog",
+	"documentation_beta" : "https://ddelec24.github.io/plugin-pterodactyl/#language#/beta/",
 	"link" : {
-		"forum":"Lien vers le forum",
-		"video" : "Lien vers une video"
+		"forum":"https://community.jeedom.com/c/plugins/monitoring/91"
 	},
 	"language": [
 		"fr_FR",
