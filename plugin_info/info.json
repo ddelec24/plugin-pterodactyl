@@ -5,7 +5,7 @@
 		"fr_FR": "Gestion de serveur Pterodactyl (Rust, Minecraft, ARk etc...)"
 	},
 	"licence" : "AGPL",
-	"author" : "MrJuJu0319",
+	"author" : "DDelec24/MrJuJu0319",
 	"require" : "4.2.16",
 	"category" : "monitoring",
 	"hasDependency" : false,
