@@ -467,6 +467,7 @@ class pterodactyl extends eqLogic {
     $info->setConfiguration("historyPurge", "-1 month");
     $info->setDisplay('forceReturnLineBefore', false);
     $info->save();
+	  
     // ######################### ACTIONS ######################### //
 
     // start
@@ -481,6 +482,8 @@ class pterodactyl extends eqLogic {
     $cmd->setType('action');
     $cmd->setSubType('other');
     $cmd->setIsVisible(1);
+    $cmd->setTemplate('dashboard', 'pterodactyl::confirmBtn');
+    $cmd->setTemplate('mobile', 'pterodactyl::confirmBtn');
     $cmd->setDisplay('forceReturnLineBefore', true);
     $cmd->save();
 
@@ -496,6 +499,8 @@ class pterodactyl extends eqLogic {
     $cmd->setType('action');
     $cmd->setSubType('other');
     $cmd->setIsVisible(1);
+    $cmd->setTemplate('dashboard', 'pterodactyl::confirmBtn');
+    $cmd->setTemplate('mobile', 'pterodactyl::confirmBtn');
     $cmd->setDisplay('forceReturnLineBefore', false);
     $cmd->save();
 
@@ -511,6 +516,8 @@ class pterodactyl extends eqLogic {
     $cmd->setType('action');
     $cmd->setSubType('other');
     $cmd->setIsVisible(1);
+    $cmd->setTemplate('dashboard', 'pterodactyl::confirmBtn');
+    $cmd->setTemplate('mobile', 'pterodactyl::confirmBtn');
     $cmd->setDisplay('forceReturnLineBefore', false);
     $cmd->save();
 
@@ -526,15 +533,17 @@ class pterodactyl extends eqLogic {
     $cmd->setType('action');
     $cmd->setSubType('other');
     $cmd->setIsVisible(1);
+    $cmd->setTemplate('dashboard', 'pterodactyl::confirmBtn');
+    $cmd->setTemplate('mobile', 'pterodactyl::confirmBtn');
     $cmd->setDisplay('forceReturnLineBefore', false);
     $cmd->save();
     
-	// rafraichir
-	$refresh = $this->getCmd(null, 'refresh');
-	if (!is_object($refresh)) {
-		$refresh = new pterodactylCmd();
-		$refresh->setName(__('Rafraîchir', __FILE__));
-	}
+    // rafraichir
+    $refresh = $this->getCmd(null, 'refresh');
+    if (!is_object($refresh)) {
+        $refresh = new pterodactylCmd();
+        $refresh->setName(__('Rafraîchir', __FILE__));
+    }
     $refresh->setOrder($order++);
 	$refresh->setEqLogic_id($this->getId());
 	$refresh->setLogicalId('refresh');
@@ -593,15 +602,14 @@ class pterodactyl extends eqLogic {
       	log::add('pterodactyl', 'debug', "Détail du serveur: " . json_encode($details->attributes));
       	$name = 		$details->attributes->name;
       	$node = 		$details->attributes->node;
-      	$description = 	$details->attributes->description;
+      	$description = 		$details->attributes->description;
       	$uuid = 		$details->attributes->uuid;
-      	log::add('pterodactyl', 'debug', "Détail du serveur name: " .$name . $node . $description);
-      	$limitMemory = 	$details->attributes->limits->memory;
-      	$limitSwap = 	$details->attributes->limits->swap;
-      	$limitDisk = 	$details->attributes->limits->disk;
+      	$limitMemory = 		$details->attributes->limits->memory;
+      	$limitSwap = 		$details->attributes->limits->swap;
+      	$limitDisk = 		$details->attributes->limits->disk;
       	$limitIo = 		$details->attributes->limits->io;
-      	$limitCpu = 	$details->attributes->limits->cpu;
-      	$limitThreads = $details->attributes->limits->threads;
+      	$limitCpu = 		$details->attributes->limits->cpu;
+      	$limitThreads = 	$details->attributes->limits->threads;
       	$ip = 			$details->attributes->relationships->allocations->data[0]->attributes->ip;
       	$ipAlias =		$details->attributes->relationships->allocations->data[0]->attributes->ipAlias;
       	$port = 		$details->attributes->relationships->allocations->data[0]->attributes->port;
@@ -613,10 +621,10 @@ class pterodactyl extends eqLogic {
       	$this->checkAndUpdateCmd("ip", $ip);
       	$this->checkAndUpdateCmd("ipAlias", $ipAlias);
       	$this->checkAndUpdateCmd("port", $port);
-	    $this->checkAndUpdateCmd("limitMemory", round(($limitMemory/1024/1024), 2));
-	    $this->checkAndUpdateCmd("limitSwap", round(($limitSwap/1024/1024), 2));
-	    $this->checkAndUpdateCmd("limitDisk", round(($limitDisk/1024/1024), 2));
-	    $this->checkAndUpdateCmd("limitIo", $limitIo);
+	$this->checkAndUpdateCmd("limitMemory", round(($limitMemory/1024/1024), 2));
+	$this->checkAndUpdateCmd("limitSwap", round(($limitSwap/1024/1024), 2));
+	$this->checkAndUpdateCmd("limitDisk", round(($limitDisk/1024/1024), 2));
+	$this->checkAndUpdateCmd("limitIo", $limitIo);
       	$this->checkAndUpdateCmd("limitCpu", $limitCpu);
         $this->checkAndUpdateCmd("limitThreads", $limitThreads);	
       	
@@ -631,17 +639,17 @@ class pterodactyl extends eqLogic {
       	$currentState = 	$resources->attributes->current_state;
       	$isSuspended = 		$resources->attributes->is_suspended;
       	$memoryBytes = 		$resources->attributes->resources->memory_bytes;
-	    $cpuAbsolute = 		$resources->attributes->resources->cpu_absolute;
-	    $diskBytes = 		$resources->attributes->resources->disk_bytes;
-	    $networkRxBytes = 	$resources->attributes->resources->network_rx_bytes;
+	$cpuAbsolute = 		$resources->attributes->resources->cpu_absolute;
+	$diskBytes = 		$resources->attributes->resources->disk_bytes;
+	$networkRxBytes = 	$resources->attributes->resources->network_rx_bytes;
       	$networkTxBytes = 	$resources->attributes->resources->network_tx_bytes;
       
       	$this->checkAndUpdateCmd("currentState", $currentState);
       	$this->checkAndUpdateCmd("isSuspended", $isSuspended);
-	    $this->checkAndUpdateCmd("memoryBytes", round(($memoryBytes/1024/1024), 2));
-	    $this->checkAndUpdateCmd("cpuAbsolute", $cpuAbsolute);
-	    $this->checkAndUpdateCmd("diskBytes", round(($diskBytes/1024/1024), 2));
-	    $this->checkAndUpdateCmd("networkRxBytes", round(($networkRxBytes/1024), 2));
+	$this->checkAndUpdateCmd("memoryBytes", round(($memoryBytes/1024/1024), 2));
+	$this->checkAndUpdateCmd("cpuAbsolute", $cpuAbsolute);
+	$this->checkAndUpdateCmd("diskBytes", round(($diskBytes/1024/1024), 2));
+	$this->checkAndUpdateCmd("networkRxBytes", round(($networkRxBytes/1024), 2));
       	$this->checkAndUpdateCmd("networkTxBytes", round(($networkTxBytes/1024), 2));
       
     }
@@ -652,8 +660,9 @@ class pterodactyl extends eqLogic {
   	$p = new pterodactylApi(config::byKey('apiKey', 'pterodactyl'), config::byKey('pteroRootUrl', 'pterodactyl'), config::byKey('iAmAdmin', 'pterodactyl'));
        
     $response = $p->postChangeState($identifier, $newState);
-    log::add("pterodactyl", "debug", "reponse: " . $response);
-    // Faire message de prise en compte ou prompt si c'est
+    //log::add("pterodactyl", "debug", "reponse: " . $response);
+    sleep(10); // ajoute une petite tempo pour récupérer le nouvel état dans la foulée
+    self::updateInfos();
   }
 }
 
@@ -693,14 +702,14 @@ class pterodactylCmd extends cmd {
         case 'kill':
         	$eqLogic->changeState('kill');
             break;
-		case 'refresh': 
+	case 'refresh': 
         	$eqLogic->updateMainInfos();
-			$eqLogic->updateInfos();
-			break;
-		default:
-			throw new Error('This should not append!');
-			log::add('pterodactyl', 'warn', 'Error while executing cmd ' . $this->getLogicalId());
-			break;
+		$eqLogic->updateInfos();
+		break;
+	default:
+		throw new Error('This should not append!');
+		log::add('pterodactyl', 'warn', 'Error while executing cmd ' . $this->getLogicalId());
+		break;
     }
     
     
