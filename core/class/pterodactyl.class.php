@@ -27,9 +27,9 @@ class pterodactyl extends eqLogic {
   /*
   * Permet de définir les possibilités de personnalisation du widget (en cas d'utilisation de la fonction 'toHtml' par exemple)
   * Tableau multidimensionnel - exemple: array('custom' => true, 'custom::layout' => false)
-  public static $_widgetPossibility = array();
+  
   */
-
+	//public static $_widgetPossibility = array("custom" => true);
   /*
   * Permet de crypter/décrypter automatiquement des champs de configuration du plugin
   * Exemple : "param1" & "param2" seront cryptés mais pas "param3"
@@ -250,7 +250,7 @@ class pterodactyl extends eqLogic {
     $info->setDisplay('forceReturnLineBefore', true);
     $info->save();
 
-    // limitSwap
+    // limitSwap => on ne récupère pas de valeur courante, utile?
     $info = $this->getCmd(null, 'limitSwap');
     if (!is_object($info)) {
       $info = new pterodactylCmd();
@@ -388,6 +388,7 @@ class pterodactyl extends eqLogic {
     $info->setType('info');
     $info->setSubType('string');
     $info->setTemplate('dashboard', 'default');
+    //$info->setTemplate('dashboard', 'pterodactyl::customStats');
     $info->setUnite('Go');
     $info->setIsVisible(1);
     $info->setIsHistorized(1);
@@ -437,7 +438,7 @@ class pterodactyl extends eqLogic {
     $info = $this->getCmd(null, 'networkRxBytes');
     if (!is_object($info)) {
       $info = new pterodactylCmd();
-      $info->setName(__('networkRxBytes', __FILE__));
+      $info->setName(__('Réception données', __FILE__));
     }
     $info->setOrder($order++);
     $info->setLogicalId('networkRxBytes');
@@ -456,7 +457,7 @@ class pterodactyl extends eqLogic {
     $info = $this->getCmd(null, 'networkTxBytes');
     if (!is_object($info)) {
       $info = new pterodactylCmd();
-      $info->setName(__('networkTxBytes', __FILE__));
+      $info->setName(__('Envoi données', __FILE__));
     }
     $info->setOrder($order++);
     $info->setLogicalId('networkTxBytes');
@@ -574,10 +575,49 @@ class pterodactyl extends eqLogic {
   }
   */
 
-  /*
-  * Permet de modifier l'affichage du widget (également utilisable par les commandes)
-  public function toHtml($_version = 'dashboard') {}
-  */
+  
+  //* Permet de modifier l'affichage du widget (également utilisable par les commandes)
+  /*public function toHtml($_version = 'dashboard') {
+    /*$theme = $this->getConfiguration('theme');
+    if ($theme === 'aucun') {
+      return parent::toHtml($_version);
+    }
+    */
+    /*$replace = $this->preToHtml($_version);
+    if (!is_array($replace)) {
+      return $replace;
+    }
+    $_version = jeedom::versionAlias($_version);
+    //$replace['#theme#'] = $theme;
+    foreach ($this->getCmd('action') as $cmd) {
+      $idCmd = $cmd->getId();
+      // UID utile?
+      $logicalId = $cmd->getLogicalId();
+      switch ($logicalId) {
+        case 'memoryBytes':
+          $replace['#memoryBytesId#'] = $idCmd;
+          $replace['#memoryBytesEqLogicId#'] = $logicalId;
+          $replace['#memoryBytesValue#'] = "titi";
+          break;
+        case 'limitMemory':
+          $replace['#limitMemoryId#'] = $idCmd;
+          $replace['#limitMemoryEqLogicId#'] = $logicalId;
+          $replace['#limitMemoryValue#'] = "toto";
+          break;
+        case 'diskBytes':
+		  $replace['#cmdDiskBytes#'] = $cmd->getName();
+          break;
+        case 'limitDisk':
+          $replace['#cmdLimitDisk#'] = $cmd->getName();
+          break;
+      }
+    }
+
+    $html = template_replace($replace, getTemplate('core', $_version, 'cmd.info.string.customStats', 'pterodactyl'));
+    return $html;
+  }*/
+
+  
 
   /*
   * Permet de déclencher une action avant modification d'une variable de configuration du plugin
