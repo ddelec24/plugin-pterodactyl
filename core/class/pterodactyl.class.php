@@ -45,7 +45,7 @@ class pterodactyl extends eqLogic {
 			if($eqLogicPterodactyl->getIsEnable() == 1)
 				$eqLogicPterodactyl->updateInfos();
 
-			log::add('pterodactyl', 'debug', 'update Serveur ' . $eqLogicPterodactyl->getName());
+			//log::add('pterodactyl', 'debug', 'update Serveur ' . $eqLogicPterodactyl->getName());
 		}
   }
   
@@ -82,7 +82,7 @@ class pterodactyl extends eqLogic {
 			if($eqLogicPterodactyl->getIsEnable() == 1)
 				$eqLogicPterodactyl->updateMainInfos();
 
-			log::add('pterodactyl', 'debug', 'update Infos Principales Serveur ' . $eqLogicPterodactyl->getName());
+			//log::add('pterodactyl', 'debug', 'update Infos Principales Serveur ' . $eqLogicPterodactyl->getName());
 		}
   }
   
@@ -467,6 +467,67 @@ class pterodactyl extends eqLogic {
     $info->setConfiguration("historyPurge", "-1 month");
     $info->setDisplay('forceReturnLineBefore', false);
     $info->save();
+    // ######################### ACTIONS ######################### //
+
+    // start
+    $cmd = $this->getCmd('action', 'start');
+    if (!is_object($cmd)) {
+      $cmd = new pterodactylCmd();
+      $cmd->setName(__('Démarrer', __FILE__));
+    }
+    $cmd->setOrder($order++);
+    $cmd->setLogicalId('start');
+    $cmd->setEqLogic_id($this->getId());
+    $cmd->setType('action');
+    $cmd->setSubType('other');
+    $cmd->setIsVisible(1);
+    $cmd->setDisplay('forceReturnLineBefore', true);
+    $cmd->save();
+
+    // restart
+    $cmd = $this->getCmd('action', 'restart');
+    if (!is_object($cmd)) {
+      $cmd = new pterodactylCmd();
+      $cmd->setName(__('Redémarrer', __FILE__));
+    }
+    $cmd->setOrder($order++);
+    $cmd->setLogicalId('restart');
+    $cmd->setEqLogic_id($this->getId());
+    $cmd->setType('action');
+    $cmd->setSubType('other');
+    $cmd->setIsVisible(1);
+    $cmd->setDisplay('forceReturnLineBefore', false);
+    $cmd->save();
+
+    // stop
+    $cmd = $this->getCmd('action', 'stop');
+    if (!is_object($cmd)) {
+      $cmd = new pterodactylCmd();
+      $cmd->setName(__('Arrêter', __FILE__));
+    }
+    $cmd->setOrder($order++);
+    $cmd->setLogicalId('stop');
+    $cmd->setEqLogic_id($this->getId());
+    $cmd->setType('action');
+    $cmd->setSubType('other');
+    $cmd->setIsVisible(1);
+    $cmd->setDisplay('forceReturnLineBefore', false);
+    $cmd->save();
+
+    // kill
+    $cmd = $this->getCmd('action', 'kill');
+    if (!is_object($cmd)) {
+      $cmd = new pterodactylCmd();
+      $cmd->setName(__('Kill', __FILE__));
+    }
+    $cmd->setOrder($order++);
+    $cmd->setLogicalId('kill');
+    $cmd->setEqLogic_id($this->getId());
+    $cmd->setType('action');
+    $cmd->setSubType('other');
+    $cmd->setIsVisible(1);
+    $cmd->setDisplay('forceReturnLineBefore', false);
+    $cmd->save();
     
 	// rafraichir
 	$refresh = $this->getCmd(null, 'refresh');
@@ -584,6 +645,16 @@ class pterodactyl extends eqLogic {
       	$this->checkAndUpdateCmd("networkTxBytes", round(($networkTxBytes/1024), 2));
       
     }
+  
+  public function changeState($newState) {
+    log::add("pterodactyl", "debug", "Changement d'état demandé: " . $newState);
+    $identifier = $this->getLogicalId();
+  	$p = new pterodactylApi(config::byKey('apiKey', 'pterodactyl'), config::byKey('pteroRootUrl', 'pterodactyl'), config::byKey('iAmAdmin', 'pterodactyl'));
+       
+    $response = $p->postChangeState($identifier, $newState);
+    log::add("pterodactyl", "debug", "reponse: " . $response);
+    // Faire message de prise en compte ou prompt si c'est
+  }
 }
 
 class pterodactylCmd extends cmd {
@@ -610,6 +681,18 @@ class pterodactylCmd extends cmd {
     $eqLogic = $this->getEqLogic(); // Récupération de l’eqlogic
 	
     switch ($this->getLogicalId()) {
+      	case 'start':
+        	$eqLogic->changeState('start');
+        	break;
+        case 'stop':
+        	$eqLogic->changeState('stop');
+            break;
+        case 'restart':
+        	$eqLogic->changeState('restart');
+            break;
+        case 'kill':
+        	$eqLogic->changeState('kill');
+            break;
 		case 'refresh': 
         	$eqLogic->updateMainInfos();
 			$eqLogic->updateInfos();
