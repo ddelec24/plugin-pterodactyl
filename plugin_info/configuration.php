@@ -40,6 +40,14 @@ if (!isConnect()) {
         <input class="configKey form-control" data-l1key="apiKey"/>
       </div>
     </div>
+    <div class="form-group">
+      <label class="col-md-4 control-label">{{Je suis admin}}
+        <sup><i class="fas fa-question-circle tooltips" title="{{Si vous avez créé une clé API Application, cochez cette case, plus d'informations dans la documentation du plugin}}"></i></sup>
+      </label>
+      <div class="col-md-4">
+        <input type="checkbox" class="configKey form-control" data-l1key="iAmAdmin"/>
+      </div>
+    </div>
 	<div class="form-group">
           <div class="col-md-4"></div>
           <div class="col-md-6">
