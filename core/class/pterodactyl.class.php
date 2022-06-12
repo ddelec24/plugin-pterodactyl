@@ -44,8 +44,6 @@ class pterodactyl extends eqLogic {
   		foreach (self::byType('pterodactyl') as $eqLogicPterodactyl) {
 			if($eqLogicPterodactyl->getIsEnable() == 1)
 				$eqLogicPterodactyl->updateInfos();
-
-			//log::add('pterodactyl', 'debug', 'update Serveur ' . $eqLogicPterodactyl->getName());
 		}
   }
   
@@ -78,11 +76,9 @@ class pterodactyl extends eqLogic {
   
   //* Fonction exécutée automatiquement tous les jours par Jeedom
   public static function cronDaily() {
-    		foreach (self::byType('pterodactyl') as $eqLogicPterodactyl) {
+    	foreach (self::byType('pterodactyl') as $eqLogicPterodactyl) {
 			if($eqLogicPterodactyl->getIsEnable() == 1)
 				$eqLogicPterodactyl->updateMainInfos();
-
-			//log::add('pterodactyl', 'debug', 'update Infos Principales Serveur ' . $eqLogicPterodactyl->getName());
 		}
   }
   
@@ -208,7 +204,7 @@ class pterodactyl extends eqLogic {
     $info->setLogicalId('port');
     $info->setEqLogic_id($this->getId());
     $info->setType('info');
-    $info->setSubType('string');
+    $info->setSubType('numeric');
     $info->setTemplate('dashboard', 'tile');
     $info->setIsVisible(1);
     $info->setIsHistorized(0);
@@ -233,22 +229,22 @@ class pterodactyl extends eqLogic {
     $info->save();
     
     // limitMemory
-    $info = $this->getCmd(null, 'limitMemory');
-    if (!is_object($info)) {
-      $info = new pterodactylCmd();
-      $info->setName(__('Limite Mémoire', __FILE__));
+    $infoLimitMemory = $this->getCmd(null, 'limitMemory');
+    if (!is_object($infoLimitMemory)) {
+      $infoLimitMemory = new pterodactylCmd();
+      $infoLimitMemory->setName(__('Limite Mémoire', __FILE__));
     }
-    $info->setOrder($order++);
-    $info->setLogicalId('limitMemory');
-    $info->setEqLogic_id($this->getId());
-    $info->setType('info');
-    $info->setSubType('string');
-    $info->setTemplate('dashboard', 'default');
-    $info->setUnite('Go');
-    $info->setIsVisible(0);
-    $info->setIsHistorized(0);
-    $info->setDisplay('forceReturnLineBefore', true);
-    $info->save();
+    $infoLimitMemory->setOrder($order++);
+    $infoLimitMemory->setLogicalId('limitMemory');
+    $infoLimitMemory->setEqLogic_id($this->getId());
+    $infoLimitMemory->setType('info');
+    $infoLimitMemory->setSubType('numeric');
+    $infoLimitMemory->setTemplate('dashboard', 'default');
+    $infoLimitMemory->setUnite('Go');
+    $infoLimitMemory->setIsVisible(0);
+    $infoLimitMemory->setIsHistorized(0);
+    $infoLimitMemory->setDisplay('forceReturnLineBefore', true);
+    $infoLimitMemory->save();
 
     // limitSwap => on ne récupère pas de valeur courante, utile?
     $info = $this->getCmd(null, 'limitSwap');
@@ -260,7 +256,7 @@ class pterodactyl extends eqLogic {
     $info->setLogicalId('limitSwap');
     $info->setEqLogic_id($this->getId());
     $info->setType('info');
-    $info->setSubType('string');
+    $info->setSubType('numeric');
     $info->setTemplate('dashboard', 'default');
     $info->setUnite('Go');
     $info->setIsVisible(0);
@@ -269,22 +265,22 @@ class pterodactyl extends eqLogic {
     $info->save();
     
     // limitDisk
-    $info = $this->getCmd(null, 'limitDisk');
-    if (!is_object($info)) {
-      $info = new pterodactylCmd();
-      $info->setName(__('Limite Disk', __FILE__));
+    $infoLimitDisk = $this->getCmd(null, 'limitDisk');
+    if (!is_object($infoLimitDisk)) {
+      $infoLimitDisk = new pterodactylCmd();
+      $infoLimitDisk->setName(__('Limite Disk', __FILE__));
     }
-    $info->setOrder($order++);
-    $info->setLogicalId('limitDisk');
-    $info->setEqLogic_id($this->getId());
-    $info->setType('info');
-    $info->setSubType('string');
-    $info->setTemplate('dashboard', 'default');
-    $info->setUnite('Go');
-    $info->setIsVisible(0);
-    $info->setIsHistorized(0);
-    $info->setDisplay('forceReturnLineBefore', true);
-    $info->save();
+    $infoLimitDisk->setOrder($order++);
+    $infoLimitDisk->setLogicalId('limitDisk');
+    $infoLimitDisk->setEqLogic_id($this->getId());
+    $infoLimitDisk->setType('info');
+    $infoLimitDisk->setSubType('numeric');
+    $infoLimitDisk->setTemplate('dashboard', 'default');
+    $infoLimitDisk->setUnite('Go');
+    $infoLimitDisk->setIsVisible(0);
+    $infoLimitDisk->setIsHistorized(0);
+    $infoLimitDisk->setDisplay('forceReturnLineBefore', true);
+    $infoLimitDisk->save();
         
     // limitIo
     $info = $this->getCmd(null, 'limitIo');
@@ -296,7 +292,7 @@ class pterodactyl extends eqLogic {
     $info->setLogicalId('limitIo');
     $info->setEqLogic_id($this->getId());
     $info->setType('info');
-    $info->setSubType('string');
+    $info->setSubType('numeric');
     $info->setTemplate('dashboard', 'default');
     $info->setIsVisible(0);
     $info->setIsHistorized(0);
@@ -304,21 +300,21 @@ class pterodactyl extends eqLogic {
     $info->save();
         
     // limitCpu
-    $info = $this->getCmd(null, 'limitCpu');
-    if (!is_object($info)) {
-      $info = new pterodactylCmd();
-      $info->setName(__('Limite CPU', __FILE__));
+    $infoLimitCpu = $this->getCmd(null, 'limitCpu');
+    if (!is_object($infoLimitCpu)) {
+      $infoLimitCpu = new pterodactylCmd();
+      $infoLimitCpu->setName(__('Limite CPU', __FILE__));
     }
-    $info->setOrder($order++);
-    $info->setLogicalId('limitCpu');
-    $info->setEqLogic_id($this->getId());
-    $info->setType('info');
-    $info->setSubType('string');
-    $info->setTemplate('dashboard', 'default');
-    $info->setIsVisible(0);
-    $info->setIsHistorized(0);
-    $info->setDisplay('forceReturnLineBefore', false);
-    $info->save();
+    $infoLimitCpu->setOrder($order++);
+    $infoLimitCpu->setLogicalId('limitCpu');
+    $infoLimitCpu->setEqLogic_id($this->getId());
+    $infoLimitCpu->setType('info');
+    $infoLimitCpu->setSubType('numeric');
+    $infoLimitCpu->setTemplate('dashboard', 'default');
+    $infoLimitCpu->setIsVisible(0);
+    $infoLimitCpu->setIsHistorized(0);
+    $infoLimitCpu->setDisplay('forceReturnLineBefore', false);
+    $infoLimitCpu->save();
         
     // limitThreads
     $info = $this->getCmd(null, 'limitThreads');
@@ -386,9 +382,13 @@ class pterodactyl extends eqLogic {
     $info->setLogicalId('memoryBytes');
     $info->setEqLogic_id($this->getId());
     $info->setType('info');
-    $info->setSubType('string');
-    $info->setTemplate('dashboard', 'default');
-    //$info->setTemplate('dashboard', 'pterodactyl::customStats');
+    $info->setSubType('numeric');
+    $info->setTemplate('dashboard', 'pterodactyl::defaultDisplayMax');
+    $info->setTemplate('mobile', 'pterodactyl::defaultDisplayMax');
+    $info->setConfiguration('minValue', 0);
+    $currentLimitMemory = $infoLimitMemory->execCmd();
+    $maxValue = (floatval($currentLimitMemory) > 0) ? floatval($currentLimitMemory) : 0;
+    $info->setConfiguration('maxValue', $maxValue);
     $info->setUnite('Go');
     $info->setIsVisible(1);
     $info->setIsHistorized(1);
@@ -400,15 +400,21 @@ class pterodactyl extends eqLogic {
     $info = $this->getCmd(null, 'cpuAbsolute');
     if (!is_object($info)) {
       $info = new pterodactylCmd();
-      $info->setName(__('cpu absolute', __FILE__));
+      $info->setName(__('Usage CPU', __FILE__));
     }
     $info->setOrder($order++);
     $info->setLogicalId('cpuAbsolute');
     $info->setEqLogic_id($this->getId());
     $info->setType('info');
-    $info->setSubType('string');
-    $info->setTemplate('dashboard', 'default');
-    $info->setIsVisible(0);
+    $info->setSubType('numeric');
+    $info->setTemplate('dashboard', 'pterodactyl::customCpuUsage');
+    $info->setTemplate('mobile', 'pterodactyl::customCpuUsage');
+    $info->setConfiguration('minValue', 0);
+    $currentMaxCpu = $infoLimitCpu->execCmd();
+    $maxValue = (floatval($currentMaxCpu) > 0) ? floatval($currentMaxCpu) : 0;
+    $info->setConfiguration('maxValue', $maxValue);
+    $info->setUnite('%');
+    $info->setIsVisible(1);
     $info->setIsHistorized(1);
     $info->setConfiguration("historyPurge", "-1 month");
     $info->setDisplay('forceReturnLineBefore', false);
@@ -424,8 +430,13 @@ class pterodactyl extends eqLogic {
     $info->setLogicalId('diskBytes');
     $info->setEqLogic_id($this->getId());
     $info->setType('info');
-    $info->setSubType('string');
-    $info->setTemplate('dashboard', 'default');
+    $info->setSubType('numeric');
+    $info->setTemplate('dashboard', 'pterodactyl::defaultDisplayMax');
+    $info->setTemplate('mobile', 'pterodactyl::defaultDisplayMax');
+    $info->setConfiguration('minValue', 0);
+    $currentLimitDisk = $infoLimitDisk->execCmd();
+    $maxValue = (floatval($currentLimitDisk) > 0) ? floatval($currentLimitDisk) : 0;
+    $info->setConfiguration('maxValue', $maxValue);
     $info->setUnite('Go');
     $info->setIsVisible(1);
     $info->setIsHistorized(1);
@@ -444,8 +455,8 @@ class pterodactyl extends eqLogic {
     $info->setLogicalId('networkRxBytes');
     $info->setEqLogic_id($this->getId());
     $info->setType('info');
-    $info->setSubType('string');
-    $info->setTemplate('dashboard', 'default');
+    $info->setSubType('numeric');
+    $info->setTemplate('dashboard', 'line');
     $info->setUnite('Ko/s');
     $info->setIsVisible(1);
     $info->setIsHistorized(1);
@@ -463,8 +474,8 @@ class pterodactyl extends eqLogic {
     $info->setLogicalId('networkTxBytes');
     $info->setEqLogic_id($this->getId());
     $info->setType('info');
-    $info->setSubType('string');
-    $info->setTemplate('dashboard', 'default');
+    $info->setSubType('numeric');
+    $info->setTemplate('dashboard', 'line');
     $info->setUnite('Ko/s');
     $info->setIsVisible(1);
     $info->setIsHistorized(1);
@@ -541,6 +552,25 @@ class pterodactyl extends eqLogic {
     $cmd->setTemplate('mobile', 'pterodactyl::confirmBtn');
     $cmd->setDisplay('forceReturnLineBefore', false);
     $cmd->save();
+
+    // envoi commande
+    $cmd = $this->getCmd(null, 'sendCmd');
+    if (!is_object($cmd)) {
+      $cmd = new pterodactylCmd();
+      $cmd->setName(__('Envoi commande', __FILE__));
+    }
+    $cmd->setOrder($order++);
+    $cmd->setLogicalId('sendCmd');
+    $cmd->setEqLogic_id($this->getId());
+    $cmd->setType('action');
+    $cmd->setTemplate('dashboard', 'tile'); //template pour le dashboard
+    $cmd->setDisplay('title_disable', 1);
+    $cmd->setDisplay('message_disable', 0);
+    $cmd->setDisplay('message_placeholder', 'Commande à envoyer');
+    $cmd->setSubType('message');
+    $cmd->setIsVisible(1);
+    $cmd->setDisplay('forceReturnLineBefore', true);
+    $cmd->save();
     
     // rafraichir
     $refresh = $this->getCmd(null, 'refresh');
@@ -577,45 +607,7 @@ class pterodactyl extends eqLogic {
 
   
   //* Permet de modifier l'affichage du widget (également utilisable par les commandes)
-  /*public function toHtml($_version = 'dashboard') {
-    /*$theme = $this->getConfiguration('theme');
-    if ($theme === 'aucun') {
-      return parent::toHtml($_version);
-    }
-    */
-    /*$replace = $this->preToHtml($_version);
-    if (!is_array($replace)) {
-      return $replace;
-    }
-    $_version = jeedom::versionAlias($_version);
-    //$replace['#theme#'] = $theme;
-    foreach ($this->getCmd('action') as $cmd) {
-      $idCmd = $cmd->getId();
-      // UID utile?
-      $logicalId = $cmd->getLogicalId();
-      switch ($logicalId) {
-        case 'memoryBytes':
-          $replace['#memoryBytesId#'] = $idCmd;
-          $replace['#memoryBytesEqLogicId#'] = $logicalId;
-          $replace['#memoryBytesValue#'] = "titi";
-          break;
-        case 'limitMemory':
-          $replace['#limitMemoryId#'] = $idCmd;
-          $replace['#limitMemoryEqLogicId#'] = $logicalId;
-          $replace['#limitMemoryValue#'] = "toto";
-          break;
-        case 'diskBytes':
-		  $replace['#cmdDiskBytes#'] = $cmd->getName();
-          break;
-        case 'limitDisk':
-          $replace['#cmdLimitDisk#'] = $cmd->getName();
-          break;
-      }
-    }
-
-    $html = template_replace($replace, getTemplate('core', $_version, 'cmd.info.string.customStats', 'pterodactyl'));
-    return $html;
-  }*/
+  /*public function toHtml($_version = 'dashboard') {}*/
 
   
 
@@ -642,17 +634,17 @@ class pterodactyl extends eqLogic {
       	$p = new pterodactylApi(config::byKey('apiKey', 'pterodactyl'), config::byKey('pteroRootUrl', 'pterodactyl'), config::byKey('iAmAdmin', 'pterodactyl'));
       	$details = $p->getServerDetails($identifier);
       	//log::add('pterodactyl', 'debug', "Détail du serveur: " . $identifier . ": " . json_encode($details));
-      	log::add('pterodactyl', 'debug', "Détail du serveur: " . json_encode($details->attributes));
+      	//log::add('pterodactyl', 'debug', "Détail du serveur: " . json_encode($details->attributes));
       	$name = 		$details->attributes->name;
       	$node = 		$details->attributes->node;
-      	$description = 		$details->attributes->description;
+      	$description = 	$details->attributes->description;
       	$uuid = 		$details->attributes->uuid;
-      	$limitMemory = 		$details->attributes->limits->memory;
-      	$limitSwap = 		$details->attributes->limits->swap;
-      	$limitDisk = 		$details->attributes->limits->disk;
+      	$limitMemory = 	$details->attributes->limits->memory;
+      	$limitSwap = 	$details->attributes->limits->swap;
+      	$limitDisk = 	$details->attributes->limits->disk;
       	$limitIo = 		$details->attributes->limits->io;
-      	$limitCpu = 		$details->attributes->limits->cpu;
-      	$limitThreads = 	$details->attributes->limits->threads;
+      	$limitCpu = 	$details->attributes->limits->cpu;
+      	$limitThreads = $details->attributes->limits->threads;
       	$ip = 			$details->attributes->relationships->allocations->data[0]->attributes->ip;
       	$ipAlias =		$details->attributes->relationships->allocations->data[0]->attributes->ipAlias;
       	$port = 		$details->attributes->relationships->allocations->data[0]->attributes->port;
@@ -664,9 +656,9 @@ class pterodactyl extends eqLogic {
       	$this->checkAndUpdateCmd("ip", $ip);
       	$this->checkAndUpdateCmd("ipAlias", $ipAlias);
       	$this->checkAndUpdateCmd("port", $port);
-		$this->checkAndUpdateCmd("limitMemory", round(($limitMemory/1024/1024/1024), 3));
-		$this->checkAndUpdateCmd("limitSwap", round(($limitSwap/1024/1024/1024), 3));
-		$this->checkAndUpdateCmd("limitDisk", round(($limitDisk/1024/1024/1024), 3));
+		$this->checkAndUpdateCmd("limitMemory", round(($limitMemory/1024), 3));
+		$this->checkAndUpdateCmd("limitSwap", round(($limitSwap/1024), 3));
+		$this->checkAndUpdateCmd("limitDisk", round(($limitDisk/1024), 3));
 		$this->checkAndUpdateCmd("limitIo", $limitIo);
       	$this->checkAndUpdateCmd("limitCpu", $limitCpu);
         $this->checkAndUpdateCmd("limitThreads", $limitThreads);	
@@ -707,6 +699,16 @@ class pterodactyl extends eqLogic {
     sleep(10); // ajoute une petite tempo pour récupérer le nouvel état dans la foulée
     self::updateInfos();
   }
+  
+  public function sendCmd($message) {
+    $identifier = $this->getLogicalId();
+  	$p = new pterodactylApi(config::byKey('apiKey', 'pterodactyl'), config::byKey('pteroRootUrl', 'pterodactyl'), config::byKey('iAmAdmin', 'pterodactyl'));
+    
+    $response = $p->postSendCommand($identifier, $message); // @TODO gestion codes HTTP 502 si offline comme dit dans la doc?
+    
+
+  }
+  
 }
 
 class pterodactylCmd extends cmd {
@@ -745,10 +747,13 @@ class pterodactylCmd extends cmd {
         case 'kill':
         	$eqLogic->changeState('kill');
             break;
-	case 'refresh': 
+		case 'sendCmd':
+        	$eqLogic->sendCmd($_options['message']);
+        	break;
+        case 'refresh': 
         	$eqLogic->updateMainInfos();
-		$eqLogic->updateInfos();
-		break;
+			$eqLogic->updateInfos();
+			break;
 	default:
 		throw new Error('This should not append!');
 		log::add('pterodactyl', 'warn', 'Error while executing cmd ' . $this->getLogicalId());
