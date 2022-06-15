@@ -71,4 +71,6 @@ Choisissez les paramètres classiques de catégorisation, affichage et objet.
 
 ![image](https://user-images.githubusercontent.com/3704897/173874678-bd99c131-df4b-46ae-bb52-477c6d508780.png)
 
-L'API ne renvoi jamais le retour de votre commande, comme le fait la console du panel, vérifiez bien la syntaxe avant envoi.
+Remarques:  
+- La valeur d'utilisation du processeur est ramenée à 100%. En effet, les valeurs sont définis à l'origine par rapport au nombre de coeurs (6 coeurs = 600), donc si vous utilisez 60 / 600, le plugin affichera 10% d'utilisation CPU. Si aucune restriction CPU n'est définie, il a été défini un seuil à 1000 pour avoir une gauge ni trop grande, ni limitée.  
+- L'API ne renvoi jamais le retour de votre commande, comme le fait la console du panel, vérifiez bien la syntaxe avant envoi.  
