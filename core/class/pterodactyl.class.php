@@ -455,7 +455,7 @@ class pterodactyl extends eqLogic {
 		if(floatval($currentMaxCpu) > 0) {
 			$info->setConfiguration('maxValue', floatval($currentMaxCpu));
 		} else {
-			$info->setConfiguration('maxValue', '');
+			$info->setConfiguration('maxValue', 1000); //on définie 1000, soit 10 coeurs
 		}
 		$info->setUnite('%');
 		$info->setIsVisible(1);
