@@ -71,3 +71,4 @@ Choisissez les paramètres classiques de catégorisation, affichage et objet.
 
 ![image](https://user-images.githubusercontent.com/3704897/173874678-bd99c131-df4b-46ae-bb52-477c6d508780.png)
 
+L'API ne renvoi jamais le retour de votre commande, comme le fait la console du panel, vérifiez bien la syntaxe avant envoi.
