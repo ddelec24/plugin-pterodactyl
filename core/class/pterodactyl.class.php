@@ -637,7 +637,7 @@ class pterodactyl extends eqLogic {
 		$p = new pterodactylApi(config::byKey('apiKey', 'pterodactyl'), config::byKey('pteroRootUrl', 'pterodactyl'), config::byKey('iAmAdmin', 'pterodactyl'));
 		$details = $p->getServerDetails($identifier);
 		//log::add('pterodactyl', 'debug', "Détail du serveur: " . $identifier . ": " . json_encode($details));
-		//log::add('pterodactyl', 'debug', "Détail du serveur: " . json_encode($details->attributes));
+		log::add('pterodactyl', 'debug', "Détail du serveur: " . json_encode($details->attributes));
       
 		$name = 		$details->attributes->name;
 		$node = 		$details->attributes->node;
@@ -671,21 +671,27 @@ class pterodactyl extends eqLogic {
 		$this->checkAndUpdateCmd("limitCpu", $limitCpu);
 		$this->checkAndUpdateCmd("limitThreads", $limitThreads);	
 
-				// Mise à jour des limites/maxValue dans les commandes infos des valeurs actuelles
-		$update = $this->getCmd(null, 'memoryBytes');
-		$maxValue = (floatval($limitMemory) > 0) ? floatval($limitMemory) : 0;
-		$update->setConfiguration('maxValue', $maxValue);
-		$update->save();
+		// Mise à jour des limites/maxValue dans les commandes infos des valeurs actuelles
+		$updateMemoryBytes = $this->getCmd(null, 'memoryBytes');
+		if (is_object($updateMemoryBytes)) {
+			$maxValue = (floatval($limitMemory) > 0) ? floatval($limitMemory) : 0;
+			$updateMemoryBytes->setConfiguration('maxValue', $maxValue);
+			$updateMemoryBytes->save();
+		}
 
-		$update = $this->getCmd(null, 'limitDisk');
-		$maxValue = (floatval($limitDisk) > 0) ? floatval($limitDisk) : 0;
-		$update->setConfiguration('maxValue', $maxValue);
-		$update->save();
+		$updateLimitDisk = $this->getCmd(null, 'limitDisk');
+		if (is_object($updateLimitDisk)) {
+			$maxValue = (floatval($limitDisk) > 0) ? floatval($limitDisk) : 0;
+			$updateLimitDisk->setConfiguration('maxValue', $maxValue);
+			$updateLimitDisk->save();
+		}
 
-		$update = $this->getCmd(null, 'limitCpu');
-		$maxValue = (floatval($currentMaxCpu) > 0) ? floatval($currentMaxCpu) : 0;
-		$update->setConfiguration('maxValue', $maxValue);
-		$update->save();
+		$updateLimitCpu = $this->getCmd(null, 'limitCpu');
+		if (is_object($updateLimitCpu)) {
+			$maxValue = (floatval($currentMaxCpu) > 0) ? floatval($currentMaxCpu) : 0;
+			$updateLimitCpu->setConfiguration('maxValue', $maxValue);
+			$updateLimitCpu->save();
+		}
 
 	}
 	
