@@ -8,20 +8,20 @@ sendVarToJS('eqType', $plugin->getId());
 $eqLogics = eqLogic::byType($plugin->getId());
 $infosPteroServ = [];
 foreach ($eqLogics as $eqLogic) {
-  	$current = [];
-  	$name = $eqLogic->getCmd(null, 'name');
-  	$name = $name->execCmd();
-  	$node = $eqLogic->getCmd(null, 'node');
-  	$node = $node->execCmd();
-    $uuid = $eqLogic->getCmd(null, 'uuid');
-  	$uuid = $uuid->execCmd();
-    $ip = $eqLogic->getCmd(null, 'ip');
-  	$ip = $ip->execCmd();
-    $port = $eqLogic->getCmd(null, 'port');
-  	$port = $port->execCmd();
-  	$current["nomnode"] = $name . " / node " . $node;
-  	$current["uuid"] = $uuid;
-  	$current["ipport"] = $ip . ":" . $port;
+	$current = [];
+	$name = $eqLogic->getCmd(null, 'name');
+	$name = $name->execCmd();
+	$node = $eqLogic->getCmd(null, 'node');
+	$node = $node->execCmd();
+	$uuid = $eqLogic->getCmd(null, 'uuid');
+	$uuid = $uuid->execCmd();
+	$ip = $eqLogic->getCmd(null, 'ip');
+	$ip = $ip->execCmd();
+	$port = $eqLogic->getCmd(null, 'port');
+	$port = $port->execCmd();
+	$current["nomnode"] = $name . " / node " . $node;
+	$current["uuid"] = $uuid;
+	$current["ipport"] = $ip . ":" . $port;
 	$infosPteroServ[$eqLogic->getId()] = $current;
 }
 sendVarToJS('infosPteroServ', $infosPteroServ);
@@ -34,7 +34,7 @@ sendVarToJS('infosPteroServ', $infosPteroServ);
 		<legend><i class="fas fa-cog"></i>  {{Gestion}}</legend>
 		<!-- Boutons de gestion du plugin -->
 		<div class="eqLogicThumbnailContainer">
-  			<div class="cursor eqLogicAction logoPrimary" data-action="sync">
+			<div class="cursor eqLogicAction logoPrimary" data-action="sync">
 				<i class="fas fa-sync"></i>
 				<br>
 				<span>{{Synchronisation automatique}}</span>
@@ -64,7 +64,7 @@ sendVarToJS('infosPteroServ', $infosPteroServ);
 			echo '</div>';
 			echo '</div>';
 			// Liste des équipements du plugin
-          	echo '<div id="div_results"></div>';
+			echo '<div id="div_results"></div>';
 			echo '<div class="eqLogicThumbnailContainer">';            
 			foreach ($eqLogics as $eqLogic) {
 				$opacity = ($eqLogic->getIsEnable()) ? '' : 'disableCard';
@@ -80,7 +80,7 @@ sendVarToJS('infosPteroServ', $infosPteroServ);
 			echo '</div>';
 		}
 		?>
-    
+	
 	</div> <!-- /.eqLogicThumbnailDisplay -->
 
 	<!-- Page de présentation de l'équipement -->
@@ -152,7 +152,7 @@ sendVarToJS('infosPteroServ', $infosPteroServ);
 									<label class="checkbox-inline"><input type="checkbox" class="eqLogicAttr" data-l1key="isVisible" checked>{{Visible}}</label>
 								</div>
 							</div>
-                            
+							
 						</div>
 
 						<!-- Partie droite de l'onglet "Équipement" -->
@@ -177,12 +177,12 @@ sendVarToJS('infosPteroServ', $infosPteroServ);
 									<div class="form-group cmdAttr label label-primary" id="portPteroServ" style="font-size : 1em">XXX</div>
 								</div>
 							</div>
-							<div class="form-group">
+							<!-- <div class="form-group">
 								<label class="col-sm-4 control-label">{{Graphique de performances}}</label>
 								<div class="col-sm-6">
 									<div class="form-group cmdAttr label label-primary" id="graphPteroServ" style="font-size : 1em">XXX</div>
 								</div>
-							</div>
+							</div> -->
 						</div>
 					</fieldset>
 				</form>

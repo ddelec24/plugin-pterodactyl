@@ -455,7 +455,7 @@ class pterodactyl extends eqLogic {
 		if(floatval($currentMaxCpu) > 0) {
 			$info->setConfiguration('maxValue', floatval($currentMaxCpu));
 		} else {
-			$info->setConfiguration('maxValue', '');
+			$info->setConfiguration('maxValue', 1000); //on définie 1000, soit 10 coeurs
 		}
 		$info->setUnite('%');
 		$info->setIsVisible(1);
@@ -656,9 +656,9 @@ class pterodactyl extends eqLogic {
 		$ipAlias =		$details->attributes->relationships->allocations->data[0]->attributes->ipAlias;
 		$port = 		$details->attributes->relationships->allocations->data[0]->attributes->port;
 
-		$limitMemory = round(($limitMemory/1024), 3);
-		$limitSwap = round(($limitSwap/1024), 3);
-		$limitDisk = round(($limitDisk/1024), 3);
+		$limitMemory = round(($limitMemory/1024), 2);
+		$limitSwap = round(($limitSwap/1024), 2);
+		$limitDisk = round(($limitDisk/1024), 2);
 
 		$this->checkAndUpdateCmd("name", $name);
 		$this->checkAndUpdateCmd("node", $node);
@@ -714,9 +714,9 @@ class pterodactyl extends eqLogic {
 
 		$this->checkAndUpdateCmd("currentState", $currentState);
 		$this->checkAndUpdateCmd("isSuspended", $isSuspended);
-		$this->checkAndUpdateCmd("memoryBytes", round(($memoryBytes/1024/1024/1024), 3));
+		$this->checkAndUpdateCmd("memoryBytes", round(($memoryBytes/1024/1024/1024), 2));
 		$this->checkAndUpdateCmd("cpuAbsolute", $cpuAbsolute);
-		$this->checkAndUpdateCmd("diskBytes", round(($diskBytes/1024/1024/1024), 3));
+		$this->checkAndUpdateCmd("diskBytes", round(($diskBytes/1024/1024/1024), 2));
 		$this->checkAndUpdateCmd("networkRxBytes", round(($networkRxBytes/1024), 2));
 		$this->checkAndUpdateCmd("networkTxBytes", round(($networkTxBytes/1024), 2));
 
