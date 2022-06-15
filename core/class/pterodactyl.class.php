@@ -452,8 +452,11 @@ class pterodactyl extends eqLogic {
 		$info->setTemplate('mobile', 'pterodactyl::customCpuUsage');
 		$info->setConfiguration('minValue', 0);
 		$currentMaxCpu = $infoLimitCpu->execCmd();
-		$maxValue = (floatval($currentMaxCpu) > 0) ? floatval($currentMaxCpu) : 0;
-		$info->setConfiguration('maxValue', $maxValue);
+		if(floatval($currentMaxCpu) > 0) {
+			$info->setConfiguration('maxValue', floatval($currentMaxCpu));
+		} else {
+			$info->setConfiguration('maxValue', '');
+		}
 		$info->setUnite('%');
 		$info->setIsVisible(1);
 		$info->setIsHistorized(1);
@@ -638,7 +641,7 @@ class pterodactyl extends eqLogic {
 		$details = $p->getServerDetails($identifier);
 		//log::add('pterodactyl', 'debug', "Détail du serveur: " . $identifier . ": " . json_encode($details));
 		log::add('pterodactyl', 'debug', "Détail du serveur: " . json_encode($details->attributes));
-      
+
 		$name = 		$details->attributes->name;
 		$node = 		$details->attributes->node;
 		$description = 	$details->attributes->description;
