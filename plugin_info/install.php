@@ -23,6 +23,14 @@ function pterodactyl_install() {
 
 // Fonction exécutée automatiquement après la mise à jour du plugin
 function pterodactyl_update() {
+	// ré-enregistrement des équipements
+	foreach (pterodactyl::byType('pterodactyl', true) as $pterodactyl) {
+		try {
+			$pterodactyl->save();
+		} catch (Exception $e) {
+			//throw new Exception(__('Erreur lors de la sauvegarde ', __FILE__));
+		}
+	}
 }
 
 // Fonction exécutée automatiquement après la suppression du plugin
