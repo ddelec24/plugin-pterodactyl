@@ -2,6 +2,17 @@
 
 Ce plugin permet de faire la liaison entre votre panel [Pterodactyl](https://pterodactyl.io/) et Jeedom que vous soyez un simple utilisateur ou un administrateur.
 
+Pterodactyl est un manager de serveurs de jeux supportant actuellement:  
+
+- Minecraft — including Spigot, Sponge, Bungeecord, Waterfall, and more
+- Rust
+- Terraria
+- Teamspeak
+- Mumble
+- Team Fortress 2
+- Counter Strike: Global Offensive
+- Garry's Mod
+- ARK: Survival Evolved
 
 # Comment ça marche
 
