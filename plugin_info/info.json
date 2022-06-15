@@ -2,7 +2,7 @@
 	"id" : "pterodactyl",
 	"name" : "Pterodactyl",
 	"description" : {
-		"fr_FR": "Gestion de serveur Pterodactyl (Rust, Minecraft, ARk etc...)"
+		"fr_FR": "Monitoring et gestion de vos serveurs de jeux via le manager Pterodactyl (Rust, Minecraft, ARK etc...)"
 	},
 	"licence" : "AGPL",
 	"author" : "DDelec24/MrJuJu0319",
