@@ -1,12 +1,13 @@
 # Bienvenue sur le plugin Pterodactyl
 
-Ce plugin permet de faire la liaison entre votre panel Pterodactyl et Jeedom que vous soyez un simple utilisateur ou un admin.
+Ce plugin permet de faire la liaison entre votre panel Pterodactyl et Jeedom que vous soyez un simple utilisateur ou un administrateur.
 
 
-# Comment ça marche.
+# Comment ça marche
 
 Nous utilisons l'API de Pterodactyl afin de récupérer les informations.   
-Jeedom va faire une demande pour lister la totalité des serveurs auxquels vous avez accès, ensuite une création automatique des équipements aura lieu sur la page des équipements.
+Jeedom va faire une demande pour lister la totalité des serveurs auxquels vous avez accès. Ensuite une création automatique des équipements aura lieu sur la page des équipements.
+
 
 # Les informations requises
 
@@ -19,7 +20,7 @@ Pour faire cela nous aurons besoin de deux informations.
 # La clef API
  ## La clef API Admin : 
   
-  Pour récupèrer la clef API admin il suffira de créer une clef API Application : 
+  Pour récupérer la clef API admin il suffira de créer une clef API Application : 
   
  ![image](https://user-images.githubusercontent.com/16257583/172942388-15d4b6ee-ffec-465a-82e9-a716e49cf9c7.png)
   
@@ -32,32 +33,39 @@ Pour faire cela nous aurons besoin de deux informations.
   
   Une fois la clef créée, il suffit de la coller dans la configuration du plugin sur Jeedom et de cocher la case **Je suis admin**
   
-  ![image](https://user-images.githubusercontent.com/16257583/172942746-5d732433-b1dc-4e80-b8ca-93afb19aac02.png)
+  ![image](https://user-images.githubusercontent.com/3704897/173872052-eb589a3a-a6eb-4d15-9136-d77bfcfce20f.png)
+
 
  ## La clef API Utilisateur : 
 Pour accéder à la clef API utilisateur vous devez aller dans votre **profil** Pterodactyl 
 
 Onglet **API Credentials**
 Mettre une description (ici Jeedom)
-Ensuite si vous le souhaitez, autorisez ou pas uniquement votre Jeedom, (uniquement si IP FIXE et pas l'ip XXXX.eu.jeedom.link) dans notre cas nous ne l'utiliserons pas car pas utile.
+Ensuite si vous le souhaitez, autorisez seulement votre Jeedom, (uniquement si IP FIXE et pas d'alias comme XXXX.eu.jeedom.link) dans notre cas nous ne l'utiliserons pas car pas utile.
 
 ![image](https://user-images.githubusercontent.com/16257583/172942846-02cc6611-b3d8-4ece-83ed-ff1c921da322.png)
 
 Une fois la clef créée il suffit de la coller dans la configuration du plugin sur Jeedom et de **NE PAS** cocher la case **Je suis admin**  
-![image](https://user-images.githubusercontent.com/16257583/172942746-5d732433-b1dc-4e80-b8ca-93afb19aac02.png)
+
+![image](https://user-images.githubusercontent.com/3704897/173872708-717fa40c-a3bc-40f8-9484-2e9a02a9846f.png)
 
 
 # Synchronisation  
 
 Pour la suite c'est comme tout les autres plugins, il faut aller dans **Plugins/Monitoring/Pterodactyl**
 Il suffit de cliquer sur **Synchronisation automatique**, les serveurs sont alors récupérés et ajoutés automatiquement dans jeedom.  
-![image](https://user-images.githubusercontent.com/16257583/172943041-90a4df24-2391-462e-8b92-74ed700247bd.png)
 
-Et voila il resta à choisir son objet et les commandes que vous souhaitez utiliser. 
+![image](https://user-images.githubusercontent.com/3704897/173873237-f1c595e0-f2c4-402f-915b-9bdbb0756abd.png)
 
-# Index 
 
-![image](https://user-images.githubusercontent.com/16257583/172943090-bb866d34-73ea-473f-b46d-68953921b098.png)
-![image](https://user-images.githubusercontent.com/16257583/172943123-b99dbbed-ea2e-44d4-a5aa-cc9ee572f6d7.png)
-![image](https://user-images.githubusercontent.com/16257583/172943153-8792cad2-4c47-4622-9b27-479f2fd985ce.png)
+# Affichage Admin
+
+Choisissez les paramètres classiques de catégorisation, affichage et objet.  
+
+![image](https://user-images.githubusercontent.com/3704897/173875412-7d3c6e3a-cae0-4fda-9999-cbb09c4d545e.png)
+
+
+# Affichage Dashboard 
+
+![image](https://user-images.githubusercontent.com/3704897/173874678-bd99c131-df4b-46ae-bb52-477c6d508780.png)
 
