@@ -16,10 +16,10 @@
 <script>
 	
 	jeedom.cmd.update['#id#'] = function(_options) {
-		var cmd = $('.cmd[data-cmd_id=#id#]')
-		var minValue = ('#minValue#' == '') ? 0 : parseInt('#minValue#')
-		var maxValue = ('#maxValue#' == '' || '#maxValue#' == '0') ? 100 : parseInt('#maxValue#')
-		
+		var cmd = $('.cmd[data-cmd_id=#id#]');
+		var minValue = ('#minValue#' == '') ? 0 : parseInt('#minValue#');
+		var maxValue = ('#maxValue#' == '') ? 1000 : parseInt('#maxValue#'); // pour les cas CPU illimités, 1000 représente déjà 10 coeurs
+
 		if (_options.display_value >= maxValue) {
 			maxValue = _options.display_value
 			var angle = 0
@@ -37,13 +37,12 @@
 			cmd.find('.state strong').first().text(pourcentValue)
 		}
 		
-
-		
 		if (is_numeric('#state#')) {
 			var rawValue = '#state#';
-			var maxValue = ('#maxValue#' == '' || '#maxValue#' == '0') ? 100 : parseFloat('#maxValue#')
+			var maxValue = ('#maxValue#' == '') ? 1000 : parseInt('#maxValue#'); // pour les cas CPU illimités, 1000 représente déjà 10 coeurs
 			var correctedValue = parseFloat(rawValue) / maxValue * 100; // exemple utilisation du proc 5 / 600, du coup en pourcentage 5/600*100
 			var pourcentValue = correctedValue.toFixed(2);
+			
 			jeedom.cmd.update['#id#']({display_value: pourcentValue, valueDate: '#valueDate#', collectDate: '#collectDate#'})
 		} else {
 			$('.cmd[data-cmd_uid=#uid#] .gauge').append('<center><span class="label label-danger">#state#</span></center>')
