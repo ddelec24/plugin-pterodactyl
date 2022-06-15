@@ -19,7 +19,7 @@ Pour faire cela nous aurons besoin de deux informations.
 
 # La clef API
 
- ## La clef API Admin  
+ **=> La clef API Admin**  
 
   Pour récupérer la clef API admin il suffira de créer une clef API Application : 
   
@@ -37,7 +37,7 @@ Pour faire cela nous aurons besoin de deux informations.
   ![image](https://user-images.githubusercontent.com/3704897/173872052-eb589a3a-a6eb-4d15-9136-d77bfcfce20f.png)
 
 
- ## La clef API Utilisateur  
+ **=> La clef API Utilisateur**  
 
 Pour accéder à la clef API utilisateur vous devez aller dans votre **profil** Pterodactyl 
 
