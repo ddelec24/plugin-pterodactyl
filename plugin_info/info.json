@@ -1,0 +1,42 @@
+{
+	"id" : "pterodactyl",
+	"name" : "Pterodactyl",
+	"description" : {
+		"fr_FR": "Monitoring et gestion de vos serveurs de jeux via le manager Pterodactyl (Rust, Minecraft, ARK etc...)"
+	},
+	"licence" : "AGPL",
+	"author" : "DDelec24/MrJuJu0319",
+	"require" : "4.2.16",
+	"category" : "monitoring",
+	"hasDependency" : false,
+	"hasOwnDeamon" : false,
+	"maxDependancyInstallTime" : 0,
+	"changelog" : "https://ddelec24.github.io/plugin-pterodactyl/#language#/changelog",
+	"documentation" : "https://ddelec24.github.io/plugin-pterodactyl/#language#/",
+	"changelog_beta" : "https://ddelec24.github.io/plugin-pterodactyl/#language#/beta/changelog",
+	"documentation_beta" : "https://ddelec24.github.io/plugin-pterodactyl/#language#/beta/",
+	"link" : {
+		"forum":"https://community.jeedom.com/c/plugins/monitoring/91"
+	},
+	"language": [
+		"fr_FR",
+		"en_US",
+		"es_ES",
+		"de_DE",
+		"ru_RU",
+		"id_ID",
+		"it_IT",
+		"ja_JP",
+		"pt_PT"
+	],
+	"compatibility": [
+		"miniplus",
+		"smart",
+		"rpi",
+		"docker",
+		"diy",
+		"mobile",
+		"v4",
+		"atlas"
+	]
+}

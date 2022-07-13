@@ -1,0 +1,167 @@
+<div class="cmd cmd-widget #history#" data-type="info" data-subtype="string" data-template="multiline" data-version="#version#" data-eqLogic_id="#eqLogic_id#" data-cmd_id="#id#" data-cmd_uid="#uid#">
+	<div class="content-xs">
+		<span class="cmdName #hide_name#">#name_display#<br/></span> <strong class="state" ></strong>
+		<button class="btn btn-sm btn-primary" id="activateConsole">Activer la console</button>
+		<p class="contentConsole"></p>
+	</div>
+
+	<script src="https://cdn.socket.io/4.4.1/socket.io.min.js" integrity="sha384-fKnu0iswBIqkjxrhQCTZ7qlLHOFEgNkRmK2vaO/LbTZSXdJfAu6ewRBdwHPhBo/H" crossorigin="anonymous"></script>
+  
+	<script>
+      	
+		var tokenPtero = null;
+		var socketPtero = null;
+
+		if (!isNaN(parseInt('#maxHeight#'))) {
+			$('.cmd[data-cmd_id=#id#]').css('max-height', parseInt('#maxHeight#')+'px')
+		}
+
+		$('#activateConsole').on('click', function() {
+			var consoleArea = $(this).parent(".content-xs").find('p.contentConsole');
+			getNewCredsWebSocket("#eqLogic_id#");
+			console.log(tokenPtero);
+		//console.log(socketPtero);
+		startConsole(consoleArea);
+	});
+
+
+		function getNewCredsWebSocket(_eqLogicId) {
+			tokenPtero = null;
+			socketPtero = null;
+			$.ajax({
+				type: 'POST',
+				url: 'plugins/pterodactyl/core/ajax/pterodactyl.ajax.php',
+				async: false,
+				data: {
+					action: 'getNewCredsWebSocket',
+					identifier: _eqLogicId
+				},
+				dataType: 'json',
+				error: function (request, status, error) {
+					handleAjaxError(request, status, error);
+
+				},
+				success: function (data) {
+					tokenPtero = data.result.token;
+					socketPtero = data.result.socket;
+				},
+				done: function(data) {
+
+				}
+			});
+		}
+
+		function startConsole(consoleArea) {
+
+		// ici connexion
+		consoleArea.empty();
+		var apiKey = "ptlc_Ys47rPDhNfWCRYnirVJ3r0rDjB8W72bbIYefKD4QXjC";
+        var tokenwings = "KjsFlqdH1foQ9XmDdmA1ugz8Q89oZKFXfd82Emnos5WSBHm1iG0Hx2xtNEmOZmW6";
+		if(socketPtero == "") {
+			console.log("[CONSOLE] Attention erreur de récupération du socket");
+			return false;
+		}
+		console.log('envoi auth sur ' + socketPtero);
+         const sp = new WebSocket(socketPtero + "?token=" +tokenPtero, {
+         	headers: {
+            	"Authorization": "Bearer " + tokenPtero
+            }
+         }); //  + "?token=" +tokenPtero
+          
+		/*const s = io(socketPtero, {
+									transports: ['websocket', 'polling'],
+									extraHeaders: {
+										"Authorization": "Bearer " + tokenPtero
+									}
+						});*/
+				
+          
+                /*sp.onmessage = function(event) {
+                  console.log("[message] Data received:" + event.data);
+                };*/
+                sp.addEventListener('message', function (event) {
+                    console.log('[message] Data received: ', event.data);
+                });
+                sp.addEventListener('open', (event) => {
+                  //sp.send('{"event":"auth","args":["KjsFlqdH1foQ9XmDdmA1ugz8Q89oZKFXfd82Emnos5WSBHm1iG0Hx2xtNEmOZmW6"]}');
+                  sp.send({"event":"auth","args":["KjsFlqdH1foQ9XmDdmA1ugz8Q89oZKFXfd82Emnos5WSBHm1iG0Hx2xtNEmOZmW6"]});
+                  sp.send('{"event":"send stats","args":[null]}');
+                  /*sp.send(JSON.stringify({
+                        event: "auth",
+                        args: ["KjsFlqdH1foQ9XmDdmA1ugz8Q89oZKFXfd82Emnos5WSBHm1iG0Hx2xtNEmOZmW6"]
+                    }));*/
+                });
+          		
+          		sp.addEventListener('error', function (event) {
+                  	console.log(event);
+                });
+                /*sp.onopen = event => {
+                  	console.log("websocket ouvert envoi auth avec token " + tokenPtero);
+                  	//var cmdAuth = '{"event":"auth","args":[' + tokenPtero + ']}';
+                  	//console.log("cmd auth = " + cmdAuth);
+                  	sp.send('{"event":"auth","args":["KjsFlqdH1foQ9XmDdmA1ugz8Q89oZKFXfd82Emnos5WSBHm1iG0Hx2xtNEmOZmW6"]})');
+                  sp.send('{"event":"send stats","args":[null]}');
+              	};*/
+          		/*sp.onopen = function(e) {
+                	console.log("websocket ouvert");
+                  	sp.send("say test");
+                }*/
+
+          		/*sp.onopen = function(ev) {
+                	console.log("connexion ouverte");
+                  	sp.send("auth",{"args":[tokenPtero]});
+                  	//sp.send({"event":"auth","args":[tokenPtero]});
+                  	//sp.send(JSON.stringify({"event":"auth","args":[tokenPtero]}));
+                    sp.addEventListener("console output", ({ data }) => {
+                      console.log(data);
+                    });
+                    sp.addEventListener("auth success", ({ data }) => {
+                      console.log(data);
+                    });
+                }*/
+
+          		/*sp.emit("auth",{"args":[tokenPtero]});
+				//s.emit("auth", { "args": ["ptlc_Ys47rPDhNfWCRYnirVJ3r0rDjB8W72bbIYefKD4QXjC"] }); // préflight OK mais 404
+          		
+            
+				sp.on('auth success'), (log) => { console.log("login ok")};
+				
+				sp.on('open', function open() {
+					console.log('opened');
+				});
+          
+				sp.on("connect", () => {
+					console.log("socket connected");
+                  	
+				});
+
+				
+				sp.on('console output', (log) => { 
+					console.log(log);
+					consoleArea.html(log);
+				});*/
+			}
+		</script>
+	</div>
+
+<!--
+How to connect
+Connect to the websocket address (in this example "wss://pterodactyl.file.properties:8080/api/servers/1a7ce997-259b-452e-8b4e-cecc464142ca/ws")
+Send the token to the websocket like this: {"event":"auth","args":["eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiIsImp0aSI6Ij..."]}
+Tokens last about 10-15 minutes, and the websocket will notify you once you need to send a new token with {"event":"token expiring"} and {"event":"token expired"}
+
+Things you can send
+{"event":"auth","args":["<token>"]} # Authenticate with websocket
+{"event":"send stats","args":[null]} # Request stats
+{"event":"send logs","args":[null]} # Request logs
+{"event":"set state","args":["<power-action>"]} # Send power action
+{"event":"send command","args":["<command>"]} # Send command
+
+Things you'll receive
+{"event":"auth success"} # Upon successful websocket authentication
+{"event":"status","args":["offline"]} # Status updates of the server
+{"event":"console output","args":["[14:07:12] [Query Listener #1/INFO]: Query running on 0.0.0.0:25565"]} # Logs from server
+{"event":"stats","args":["{\"memory_bytes\":526626816,\"memory_limit_bytes\":588800000,\"cpu_absolute\":588.815,\"network\":{\"rx_bytes\":1126,\"tx_bytes\":1126},\"state\":\"stopping\",\"disk_bytes\":128118626}"]} # Stats from server
+{"event":"token expiring"} # Token is expiring soon so request a new one and send it to the websocket
+{"event":"token expired"} # Token has expired
+-->
