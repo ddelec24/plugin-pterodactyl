@@ -14,7 +14,9 @@
       var cmd = $('.cmd[data-cmd_id=#id#]')
       var minValue = ('#minValue#' == '') ? 0 : parseInt('#minValue#')
       var maxValue = ('#maxValue#' == '') ? 100 : parseInt('#maxValue#')
-      var displayMaxValue = (parseInt('#maxValue#') > 0) ? '#maxValue#' : '∞'; // si 0 on considère que c'est infini
+      // si 0 on considère que c'est infini
+      // idem 999999Go pour le disque et 1024Go pour la ram comme limite pour dire infini
+      var displayMaxValue = (parseInt('#maxValue#') > 0 && parseInt('#maxValue#') != 999999 && parseInt('#maxValue#') != 1024) ? '#maxValue#' : '∞';
       cmd.find('.state strong').eq(1).text(displayMaxValue); // on met la valeur max dans le 2eme strong du span state
       
       if (_options.display_value >= maxValue) {

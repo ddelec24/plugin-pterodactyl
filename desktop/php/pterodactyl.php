@@ -39,11 +39,6 @@ sendVarToJS('infosPteroServ', $infosPteroServ);
 				<br>
 				<span>{{Synchronisation automatique}}</span>
 			</div>
-			<div class="cursor eqLogicAction" data-action="add">
-				<i class="fas fa-plus-circle"></i>
-				<br>
-				<span>{{Ajouter un serveur manuellement}}</span>
-			</div>
 			<div class="cursor eqLogicAction logoSecondary" data-action="gotoPluginConf">
 				<i class="fas fa-wrench"></i>
 				<br>

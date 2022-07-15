@@ -336,7 +336,7 @@ class pterodactyl extends eqLogic {
 		$info->save();
 		
 		
-	 // ========= Informations supplémentaires via resources ======== //
+		// ========= Informations supplémentaires via resources ======== //
 
 		// currentState
 		$info = $this->getCmd(null, 'currentState');
@@ -357,19 +357,36 @@ class pterodactyl extends eqLogic {
 		$info->setDisplay('forceReturnLineBefore', true);
 		$info->save();
 
+		// Uptime
+		$info = $this->getCmd(null, 'uptime');
+		if (!is_object($info)) {
+			$info = new pterodactylCmd();
+			$info->setName(__('Uptime', __FILE__));
+		}
+		$info->setOrder(15);
+		$info->setLogicalId('uptime');
+		$info->setEqLogic_id($this->getId());
+		$info->setType('info');
+		$info->setSubType('string');
+		$info->setTemplate('dashboard', 'default');
+		$info->setIsVisible(1);
+		$info->setIsHistorized(0);
+		$info->setDisplay('forceReturnLineBefore', true);
+		$info->save();
+		
 		// networkRxBytes
 		$info = $this->getCmd(null, 'networkRxBytes');
 		if (!is_object($info)) {
 			$info = new pterodactylCmd();
 			$info->setName(__('Réception données', __FILE__));
 		}
-		$info->setOrder(15);
+		$info->setOrder(16);
 		$info->setLogicalId('networkRxBytes');
 		$info->setEqLogic_id($this->getId());
 		$info->setType('info');
 		$info->setSubType('numeric');
 		$info->setTemplate('dashboard', 'line');
-		$info->setUnite('Ko/s');
+		$info->setUnite('Mo');
 		$info->setIsVisible(1);
 		$info->setIsHistorized(1);
 		$info->setConfiguration("historyPurge", "-1 month");
@@ -382,13 +399,13 @@ class pterodactyl extends eqLogic {
 			$info = new pterodactylCmd();
 			$info->setName(__('Envoi données', __FILE__));
 		}
-		$info->setOrder(16);
+		$info->setOrder(17);
 		$info->setLogicalId('networkTxBytes');
 		$info->setEqLogic_id($this->getId());
 		$info->setType('info');
 		$info->setSubType('numeric');
 		$info->setTemplate('dashboard', 'line');
-		$info->setUnite('Ko/s');
+		$info->setUnite('Mo');
 		$info->setIsVisible(1);
 		$info->setIsHistorized(1);
 		$info->setConfiguration("historyPurge", "-1 month");
@@ -401,7 +418,7 @@ class pterodactyl extends eqLogic {
 			$info = new pterodactylCmd();
 			$info->setName(__('Etat Suspendu', __FILE__));
 		}
-		$info->setOrder(17);
+		$info->setOrder(18);
 		$info->setLogicalId('isSuspended');
 		$info->setEqLogic_id($this->getId());
 		$info->setType('info');
@@ -419,7 +436,7 @@ class pterodactyl extends eqLogic {
 			$info = new pterodactylCmd();
 			$info->setName(__('Mémoire RAM utilisée', __FILE__));
 		}
-		$info->setOrder(18);
+		$info->setOrder(19);
 		$info->setLogicalId('memoryBytes');
 		$info->setEqLogic_id($this->getId());
 		$info->setType('info');
@@ -428,8 +445,11 @@ class pterodactyl extends eqLogic {
 		$info->setTemplate('mobile', 'pterodactyl::defaultDisplayMax');
 		$info->setConfiguration('minValue', 0);
 		$currentLimitMemory = $infoLimitMemory->execCmd();
-		$maxValue = (floatval($currentLimitMemory) > 0) ? floatval($currentLimitMemory) : 0;
-		$info->setConfiguration('maxValue', $maxValue);
+		if(floatval($currentLimitMemory) > 0) {
+			$info->setConfiguration('maxValue', floatval($currentLimitMemory));
+		} else {
+			$info->setConfiguration('maxValue', 1024); //on définie 1024, soit 1To
+		}
 		$info->setUnite('Go');
 		$info->setIsVisible(1);
 		$info->setIsHistorized(1);
@@ -443,7 +463,7 @@ class pterodactyl extends eqLogic {
 			$info = new pterodactylCmd();
 			$info->setName(__('Usage CPU', __FILE__));
 		}
-		$info->setOrder(19);
+		$info->setOrder(20);
 		$info->setLogicalId('cpuAbsolute');
 		$info->setEqLogic_id($this->getId());
 		$info->setType('info');
@@ -470,7 +490,7 @@ class pterodactyl extends eqLogic {
 			$info = new pterodactylCmd();
 			$info->setName(__('Espace disque utilisé', __FILE__));
 		}
-		$info->setOrder(20);
+		$info->setOrder(21);
 		$info->setLogicalId('diskBytes');
 		$info->setEqLogic_id($this->getId());
 		$info->setType('info');
@@ -479,15 +499,18 @@ class pterodactyl extends eqLogic {
 		$info->setTemplate('mobile', 'pterodactyl::defaultDisplayMax');
 		$info->setConfiguration('minValue', 0);
 		$currentLimitDisk = $infoLimitDisk->execCmd();
-		$maxValue = (floatval($currentLimitDisk) > 0) ? floatval($currentLimitDisk) : 0;
-		$info->setConfiguration('maxValue', $maxValue);
+		if(floatval($currentLimitDisk) > 0) {
+			$info->setConfiguration('maxValue', floatval($currentLimitDisk));
+		} else {
+			$info->setConfiguration('maxValue', 999999); //on définie 9999999999999 pour afficher infini dans le template
+		}
 		$info->setUnite('Go');
 		$info->setIsVisible(1);
 		$info->setIsHistorized(1);
 		$info->setConfiguration("historyPurge", "-1 month");
 		$info->setDisplay('forceReturnLineBefore', false);
 		$info->save();
-
+		
 		
 		// ######################### ACTIONS ######################### //
 
@@ -497,7 +520,7 @@ class pterodactyl extends eqLogic {
 			$cmd = new pterodactylCmd();
 			$cmd->setName(__('Démarrer', __FILE__));
 		}
-		$cmd->setOrder(21);
+		$cmd->setOrder(22);
 		$cmd->setLogicalId('start');
 		$cmd->setEqLogic_id($this->getId());
 		$cmd->setType('action');
@@ -514,7 +537,7 @@ class pterodactyl extends eqLogic {
 			$cmd = new pterodactylCmd();
 			$cmd->setName(__('Redémarrer', __FILE__));
 		}
-		$cmd->setOrder(22);
+		$cmd->setOrder(23);
 		$cmd->setLogicalId('restart');
 		$cmd->setEqLogic_id($this->getId());
 		$cmd->setType('action');
@@ -531,7 +554,7 @@ class pterodactyl extends eqLogic {
 			$cmd = new pterodactylCmd();
 			$cmd->setName(__('Arrêter', __FILE__));
 		}
-		$cmd->setOrder(23);
+		$cmd->setOrder(24);
 		$cmd->setLogicalId('stop');
 		$cmd->setEqLogic_id($this->getId());
 		$cmd->setType('action');
@@ -548,7 +571,7 @@ class pterodactyl extends eqLogic {
 			$cmd = new pterodactylCmd();
 			$cmd->setName(__('Kill', __FILE__));
 		}
-		$cmd->setOrder(24);
+		$cmd->setOrder(25);
 		$cmd->setLogicalId('kill');
 		$cmd->setEqLogic_id($this->getId());
 		$cmd->setType('action');
@@ -565,7 +588,7 @@ class pterodactyl extends eqLogic {
 			$cmd = new pterodactylCmd();
 			$cmd->setName(__('Envoi commande', __FILE__));
 		}
-		$cmd->setOrder(25);
+		$cmd->setOrder(26);
 		$cmd->setLogicalId('sendCmd');
 		$cmd->setEqLogic_id($this->getId());
 		$cmd->setType('action');
@@ -584,7 +607,7 @@ class pterodactyl extends eqLogic {
 			$refresh = new pterodactylCmd();
 			$refresh->setName(__('Rafraîchir', __FILE__));
 		}
-		$refresh->setOrder(26);
+		$refresh->setOrder(27);
 		$refresh->setEqLogic_id($this->getId());
 		$refresh->setLogicalId('refresh');
 		$refresh->setType('action');
@@ -639,8 +662,8 @@ class pterodactyl extends eqLogic {
 		$identifier = $this->getLogicalId();
 		$p = new pterodactylApi(config::byKey('apiKey', 'pterodactyl'), config::byKey('pteroRootUrl', 'pterodactyl'), config::byKey('iAmAdmin', 'pterodactyl'));
 		$details = $p->getServerDetails($identifier);
-		//log::add('pterodactyl', 'debug', "Détail du serveur: " . $identifier . ": " . json_encode($details));
-		log::add('pterodactyl', 'debug', "Détail du serveur: " . json_encode($details->attributes));
+		//log::add('pterodactyl', 'debug', "function updateMainInfos() : " . $identifier . ": " . json_encode($details));
+		log::add('pterodactyl', 'debug', "function updateMainInfos() : " . json_encode($details->attributes));
 
 		$name = 		$details->attributes->name;
 		$node = 		$details->attributes->node;
@@ -677,49 +700,60 @@ class pterodactyl extends eqLogic {
 		// Mise à jour des limites/maxValue dans les commandes infos des valeurs actuelles
 		$updateMemoryBytes = $this->getCmd(null, 'memoryBytes');
 		if (is_object($updateMemoryBytes)) {
-			$maxValue = (floatval($limitMemory) > 0) ? floatval($limitMemory) : 0;
+			$maxValue = (floatval($limitMemory) > 0) ? floatval($limitMemory) : 1024; // 1To pour afficher infini
 			$updateMemoryBytes->setConfiguration('maxValue', $maxValue);
 			$updateMemoryBytes->save();
 		}
 
-		$updateLimitDisk = $this->getCmd(null, 'limitDisk');
-		if (is_object($updateLimitDisk)) {
-			$maxValue = (floatval($limitDisk) > 0) ? floatval($limitDisk) : 0;
-			$updateLimitDisk->setConfiguration('maxValue', $maxValue);
-			$updateLimitDisk->save();
+		$updateDiskBytes = $this->getCmd(null, 'diskBytes');
+		if (is_object($updateDiskBytes)) {
+			$maxValue = (floatval($limitDisk) > 0) ? floatval($limitDisk) : 999999; /// pour afficher infini
+			$updateDiskBytes->setConfiguration('maxValue', $maxValue);
+			$updateDiskBytes->save();
 		}
 
-		$updateLimitCpu = $this->getCmd(null, 'limitCpu');
-		if (is_object($updateLimitCpu)) {
-			$maxValue = (floatval($currentMaxCpu) > 0) ? floatval($currentMaxCpu) : 0;
-			$updateLimitCpu->setConfiguration('maxValue', $maxValue);
-			$updateLimitCpu->save();
+		$updateCpuAbsolute = $this->getCmd(null, 'cpuAbsolute');
+		if (is_object($updateCpuAbsolute)) {
+			$maxValue = (floatval($limitCpu) > 0) ? floatval($limitCpu) : 1000; // 10 coeurs
+			$updateCpuAbsolute->setConfiguration('maxValue', $maxValue);
+			$updateCpuAbsolute->save();
 		}
 
+		//$this->clearCacheWidget();
+		$this->refreshWidget();
 	}
 	
 	public function updateInfos() {
 		$identifier = $this->getLogicalId();
 		$p = new pterodactylApi(config::byKey('apiKey', 'pterodactyl'), config::byKey('pteroRootUrl', 'pterodactyl'), config::byKey('iAmAdmin', 'pterodactyl'));
 		$resources = $p->getResourcesUsage($identifier);
-		//log::add('pterodactyl', 'debug', "Détail du serveur: " . $identifier . ": " . json_encode($resources));
-
+		log::add('pterodactyl', 'debug', "function updateInfos() : " . $identifier . ": " . json_encode($resources));
+		
 		$currentState = 	$resources->attributes->current_state;
-		$isSuspended = 		$resources->attributes->is_suspended;
+		if($currentState == "") {
+		  if($resources->errors[0]->status == "409") { // erreur renvoyé si suspendu
+		  	$currentState = "Suspended";
+		  } else {
+		  	$currentState = "Unable to contact Server";
+		  	log::add('pterodactyl', 'debug', "Erreur de mise à jour des infos. détail: " . json_encode($resources));
+		  }
+		}
 		$memoryBytes = 		$resources->attributes->resources->memory_bytes;
 		$cpuAbsolute = 		$resources->attributes->resources->cpu_absolute;
 		$diskBytes = 		$resources->attributes->resources->disk_bytes;
 		$networkRxBytes = 	$resources->attributes->resources->network_rx_bytes;
 		$networkTxBytes = 	$resources->attributes->resources->network_tx_bytes;
+		$uptime = 			$resources->attributes->resources->uptime; // donné en ms
 
 		$this->checkAndUpdateCmd("currentState", $currentState);
 		$this->checkAndUpdateCmd("isSuspended", $isSuspended);
 		$this->checkAndUpdateCmd("memoryBytes", round(($memoryBytes/1024/1024/1024), 2));
 		$this->checkAndUpdateCmd("cpuAbsolute", $cpuAbsolute);
 		$this->checkAndUpdateCmd("diskBytes", round(($diskBytes/1024/1024/1024), 2));
-		$this->checkAndUpdateCmd("networkRxBytes", round(($networkRxBytes/1024), 2));
-		$this->checkAndUpdateCmd("networkTxBytes", round(($networkTxBytes/1024), 2));
-
+		$this->checkAndUpdateCmd("networkRxBytes", round(($networkRxBytes/1024/1024), 2));
+		$this->checkAndUpdateCmd("networkTxBytes", round(($networkTxBytes/1024/1024), 2));
+		$this->checkAndUpdateCmd("uptime", $this->secondsToTime(round($uptime/1000)));
+		
 	}
 	
 	public function changeState($newState) {
@@ -728,7 +762,6 @@ class pterodactyl extends eqLogic {
 		$p = new pterodactylApi(config::byKey('apiKey', 'pterodactyl'), config::byKey('pteroRootUrl', 'pterodactyl'), config::byKey('iAmAdmin', 'pterodactyl'));
 
 		$response = $p->postChangeState($identifier, $newState);
-		//log::add("pterodactyl", "debug", "reponse: " . $response);
 		sleep(10); // ajoute une petite tempo pour récupérer le nouvel état dans la foulée
 		self::updateInfos();
 	}
@@ -742,6 +775,12 @@ class pterodactyl extends eqLogic {
 
 	}
 	
+	private function secondsToTime($seconds) {
+		$dtF = new \DateTime('@0');
+		$dtT = new \DateTime("@$seconds");
+		return $dtF->diff($dtT)->format('%a jours, %h heures, %i minutes et %s secondes');
+	}
+
 }
 
 class pterodactylCmd extends cmd {
@@ -769,28 +808,28 @@ class pterodactylCmd extends cmd {
 
 		switch ($this->getLogicalId()) {
 			case 'start':
-			$eqLogic->changeState('start');
-			break;
+				$eqLogic->changeState('start');
+				break;
 			case 'stop':
-			$eqLogic->changeState('stop');
-			break;
+				$eqLogic->changeState('stop');
+				break;
 			case 'restart':
-			$eqLogic->changeState('restart');
-			break;
+				$eqLogic->changeState('restart');
+				break;
 			case 'kill':
-			$eqLogic->changeState('kill');
-			break;
+				$eqLogic->changeState('kill');
+				break;
 			case 'sendCmd':
-			$eqLogic->sendCmd($_options['message']);
-			break;
+				$eqLogic->sendCmd($_options['message']);
+				break;
 			case 'refresh': 
-			$eqLogic->updateMainInfos();
-			$eqLogic->updateInfos();
-			break;
+				$eqLogic->updateMainInfos();
+				$eqLogic->updateInfos();
+				break;
 			default:
-			throw new Error('This should not append!');
-			log::add('pterodactyl', 'warn', 'Error while executing cmd ' . $this->getLogicalId());
-			break;
+				throw new Error('This should not append!');
+				log::add('pterodactyl', 'warn', 'Error while executing cmd ' . $this->getLogicalId());
+				break;
 		}
 		
 		
