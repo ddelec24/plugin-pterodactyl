@@ -6,8 +6,8 @@
 
 # 18/07/2022 - BETA  
 
-- Correction de l'affichage pour les limites de données de disque et ram si les limites sont inférieures à 1Go.  
-- Forçage du fafraichissement du widget lors d'une mise à jour.  
+- Correction de l'affichage pour les limites de données de disque et ram si celles-ci sont inférieures à 1Go.  
+- Forçage du rafraichissement du widget lors d'une mise à jour.  
 - Amélioration du texte de l'uptime (cacher 0 jours par exemple) et gestion de la pluralisation des mots.  
 
 # 15/07/2022 - BETA
