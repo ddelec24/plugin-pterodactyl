@@ -1,8 +1,14 @@
-# Changelog plugin Pterodactyl  
+# Changelog BETA plugin Pterodactyl  
 
 > **IMPORTANT**  
 >  
 > S'il n'y a pas d'information sur la mise à jour, c'est que celle-ci concerne uniquement de la mise à jour de documentation, de traduction ou de texte.  
+
+# 18/07/2022 - BETA  
+
+- Correction de l'affichage pour les limites de données de disque et ram si les limites sont inférieures à 1Go.  
+- Forçage du fafraichissement du widget lors d'une mise à jour.  
+- Amélioration du texte de l'uptime (cacher 0 jours par exemple) et gestion de la pluralisation des mots.  
 
 # 15/07/2022 - BETA
 
@@ -13,11 +19,13 @@
 - Correction de l'affichage pour les valeurs cpu/ram/disk sans limites.
 - En cours: Il semblerait que la clé application (ptla_xxxx) ne soit pas utilisable, seule la clé utilisateur en admin/utilisateur. Investigations en cours...  
 
+
 # 15/06/2022 - Stable
 
 - Publication du plugin en version stable
 - Fix de bugs d'affichages si pas de limite de CPU allouée, 2 décimales pour l'espace disque et la RAM
 - Mise à jour documentation
+
 
 # 10/06/2022 (ALPHA)
 

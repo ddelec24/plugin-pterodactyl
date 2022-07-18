@@ -27,6 +27,8 @@ function pterodactyl_update() {
 	foreach (pterodactyl::byType('pterodactyl', true) as $pterodactyl) {
 		try {
 			$pterodactyl->save();
+          	// actualisation du widget
+          	$pterodactyl->refreshWidget();	
 		} catch (Exception $e) {
 			//throw new Exception(__('Erreur lors de la sauvegarde ', __FILE__));
 		}

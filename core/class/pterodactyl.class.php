@@ -719,7 +719,6 @@ class pterodactyl extends eqLogic {
 			$updateCpuAbsolute->save();
 		}
 
-		//$this->clearCacheWidget();
 		$this->refreshWidget();
 	}
 	
@@ -778,7 +777,20 @@ class pterodactyl extends eqLogic {
 	private function secondsToTime($seconds) {
 		$dtF = new \DateTime('@0');
 		$dtT = new \DateTime("@$seconds");
-		return $dtF->diff($dtT)->format('%a jours, %h heures, %i minutes et %s secondes');
+		$days = $dtF->diff($dtT)->format('%a');
+		$hours = $dtF->diff($dtT)->format('%h');
+		$mins = $dtF->diff($dtT)->format('%i');
+		$secs = $dtF->diff($dtT)->format('%s');
+	  
+		$ret = "";
+		$ret .= ($days > 0) ? ($days.' '.($days == 1 ? 'jour' : 'jours')) : "";
+		$ret .= (($days > 0) && ($hours > 0 || $mins > 0)) ? ", " : "";
+		$ret .= ($hours > 0) ? ($hours.' '.($hours == 1 ? 'heure' : 'heures')) : "";
+		$ret .= (($days > 0 || $hours > 0) && $mins > 0) ? ", " : "";
+		$ret .= ($mins > 0) ? ($mins.' '.($mins == 1 ? 'minute' : 'minutes')) . " " : "";
+		$ret .= (($days > 0 || $hours > 0 || $mins > 0) && $secs > 0)  ? " et " : "";
+		$ret .= ($secs > 0) ? ($secs.' '.($secs == 1 ? 'seconde' : 'secondes')) : "";
+		return trim($ret);
 	}
 
 }
