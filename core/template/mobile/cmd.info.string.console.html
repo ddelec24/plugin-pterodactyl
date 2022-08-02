@@ -1,0 +1,118 @@
+<div class="cmd #history#" data-type="info" data-subtype="string" data-template="multiline" data-version="#version#" data-eqLogic_id="#eqLogic_id#" data-cmd_id="#id#" data-cmd_uid="#uid#">
+	<div class="content-xs">
+		<button class="btn btn-sm btn-primary" id="activateConsole_#id#">Activer la console</button>
+	</div>
+	<div class="contentConsole_#id# content-xs" style="text-align: left; font-size: 8pt; font-family: monospace; margin: 5px; overflow-y: scroll; word-wrap: break-word;">
+	</div>
+
+	<script>
+
+		var tokenPtero = null;
+		var socketPtero = null;
+      	var tileHeight = $(".contentConsole_#id#").parents('.eqLogic').height(); // on récupère la hauteur de la tuile pour le répercuté sur le div console
+		$(".contentConsole_#id#").css('max-height', (parseInt(tileHeight) - 100) +'px'); // 100 de moins car il y a le bouton qui prend de lespace dans la tuile)
+            
+		$('#activateConsole_#id#').on('click', function() {
+          	var consoleArea = $(".contentConsole_#id#");
+			getNewCredsWebSocket("#eqLogic_id#");
+			startConsole(consoleArea);
+            window.setInterval(function() {
+              consoleArea.scrollTop(consoleArea[0].scrollHeight); //auto scroll down
+            }, 1000); // toutes les 1sec on se met en bas
+          	// @TODO implantation d'un arret du scroll auto si scroll up détecté? et on réactive si manuellement on revient bottom scroll
+		});
+
+
+		function getNewCredsWebSocket(_eqLogicId) {
+			tokenPtero = null;
+			socketPtero = null;
+			$.ajax({
+				type: 'POST',
+				url: 'plugins/pterodactyl/core/ajax/pterodactyl.ajax.php',
+				async: false,
+				data: {
+					action: 'getNewCredsWebSocket',
+					identifier: _eqLogicId
+				},
+				dataType: 'json',
+				error: function (request, status, error) {
+					handleAjaxError(request, status, error);
+				},
+				success: function (data) {
+					tokenPtero = data.result.token;
+					socketPtero = data.result.socket;
+				},
+				done: function(data) {
+
+				}
+			});
+		}
+
+		function startConsole(consoleArea) {
+
+			// ici connexion
+			consoleArea.empty();
+
+			if(socketPtero == "") {
+				console.log("[CONSOLE] Attention erreur de récupération du socket");
+				return false;
+			}
+
+			const sp = new WebSocket(socketPtero);
+			var messageAuthentication = {
+				event: "auth",
+				args: [tokenPtero]
+			};
+
+			sp.onmessage = function(event) {
+					let msg = JSON.parse(event.data);
+					// on alimente le retour console
+					if(msg.event == "console output") {
+						$.each( msg.args, function( i, val ) {
+							consoleArea.append(val + "<br />");
+						});
+					}
+					// le token expire bientot, on en redemande un
+					if(msg.event == "token expiring") {
+						getNewCredsWebSocket("#eqLogic_id#"); // renouvellement automatique à la réception du message dexpiration
+                      	sp.send(JSON.stringify(messageAuthentication));
+					}
+					// authentification ok
+					if(msg.event == "auth success") {
+                      
+					}
+			};
+
+			sp.onopen = function (event) {
+				sp.send(JSON.stringify(messageAuthentication));
+			}
+			sp.onclose = function (event) {
+				sp = null;
+			}
+          	
+
+		}
+	</script>
+</div>
+
+<!--
+How to connect
+Connect to the websocket address (in this example "wss://pterodactyl.file.properties:8080/api/servers/1a7ce997-259b-452e-8b4e-cecc464142ca/ws")
+Send the token to the websocket like this: {"event":"auth","args":["eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiIsImp0aSI6Ij..."]}
+Tokens last about 10-15 minutes, and the websocket will notify you once you need to send a new token with {"event":"token expiring"} and {"event":"token expired"}
+
+Things you can send
+{"event":"auth","args":["<token>"]} # Authenticate with websocket
+{"event":"send stats","args":[null]} # Request stats
+{"event":"send logs","args":[null]} # Request logs
+{"event":"set state","args":["<power-action>"]} # Send power action
+{"event":"send command","args":["<command>"]} # Send command
+
+Things you'll receive
+{"event":"auth success"} # Upon successful websocket authentication
+{"event":"status","args":["offline"]} # Status updates of the server
+{"event":"console output","args":["[14:07:12] [Query Listener #1/INFO]: Query running on 0.0.0.0:25565"]} # Logs from server
+{"event":"stats","args":["{\"memory_bytes\":526626816,\"memory_limit_bytes\":588800000,\"cpu_absolute\":588.815,\"network\":{\"rx_bytes\":1126,\"tx_bytes\":1126},\"state\":\"stopping\",\"disk_bytes\":128118626}"]} # Stats from server
+{"event":"token expiring"} # Token is expiring soon so request a new one and send it to the websocket
+{"event":"token expired"} # Token has expired
+-->

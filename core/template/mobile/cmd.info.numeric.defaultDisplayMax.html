@@ -12,8 +12,8 @@
 	<script>
     jeedom.cmd.update['#id#'] = function(_options) {
       var cmd = $('.cmd[data-cmd_id=#id#]')
-      var minValue = ('#minValue#' == '') ? 0 : parseInt('#minValue#')
-      var maxValue = ('#maxValue#' == '') ? 100 : parseInt('#maxValue#')
+      var minValue = ('#minValue#' == '') ? 0 : parseFloat('#minValue#')
+      var maxValue = ('#maxValue#' == '') ? 100 : parseFloat('#maxValue#')
       // si 0 on considère que c'est infini
       // idem 999999Go pour le disque et 1024Go pour la ram comme limite pour dire infini
       var displayMaxValue = (parseFloat('#maxValue#') > 0 && parseFloat('#maxValue#') != 999999 && parseFloat('#maxValue#') != 1024) ? '#maxValue#' : '∞';

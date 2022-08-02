@@ -4,6 +4,14 @@
 >  
 > S'il n'y a pas d'information sur la mise à jour, c'est que celle-ci concerne uniquement de la mise à jour de documentation, de traduction ou de texte.  
 
+# 02/08/2022 - BETA
+
+- Implementation du nombre de joueurs et joueurs max (uniquement minecraft est implanté actuellement).  
+- Affichage de la console en temps réel sur le dashboard.  
+- Correction d'un bug sur les envois des commandes.  
+- Correction de la gauge qui était à 100% quand on avait des valeurs en dessous de 1.  
+- TODO: refaire la doc avec les nouvelles captures et nouvelles fonctionnalités.  
+
 # 18/07/2022 - BETA  
 
 - Correction de l'affichage pour les limites de données de disque et ram si celles-ci sont inférieures à 1Go.  
