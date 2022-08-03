@@ -875,8 +875,13 @@ class pterodactyl extends eqLogic {
 			$url = "https://minecraft-api.com/api/ping/" . $pingIp . "/" . $pingPort . "/json";
 			log::add('pterodactyl', 'debug', 'url ping = ' . $url);
 
-          	if(!filter_var($pingIp, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE)) // pas d'ip privée pour le ping joueurs
-	          	return;
+            if(filter_var($pingIp, FILTER_VALIDATE_IP)) { // on vérifie si on a une ip et qu'elle est pas locale
+                if(!filter_var($pingIp, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE))
+                    return;
+            } else {
+                if(!filter_var($pingIp, FILTER_VALIDATE_DOMAIN, FILTER_FLAG_HOSTNAME)) // on vérifie que l'alias soit un domaine correct
+                  return;
+            }
           
 			$content = @file_get_contents($url);
           	//$content = '{"description":"A Minecraft Server","players":{"max":500,"online":0},"version":{"name":"Spigot 1.8.8","protocol":4}}';
