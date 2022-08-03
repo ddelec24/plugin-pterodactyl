@@ -234,7 +234,7 @@ class pterodactyl extends eqLogic {
 		$info->setType('info');
 		$info->setSubType('string');
 		$info->setTemplate('dashboard', 'default');
-		$info->setIsVisible(0);
+		$info->setIsVisible(1);
 		$info->setIsHistorized(0);
 		$info->setDisplay('forceReturnLineBefore', false);
 		$info->save();
@@ -749,19 +749,25 @@ class pterodactyl extends eqLogic {
 		//log::add('pterodactyl', 'debug', "function updateMainInfos() : " . $identifier . ": " . json_encode($details));
 		log::add('pterodactyl', 'debug', "function updateMainInfos() : " . json_encode($details->attributes));
 
-		$name = 		$details->attributes->name;
-		$node = 		$details->attributes->node;
-		$description = 	$details->attributes->description;
-		$uuid = 		$details->attributes->uuid;
-		$limitMemory = 	$details->attributes->limits->memory;
-		$limitSwap = 	$details->attributes->limits->swap;
-		$limitDisk = 	$details->attributes->limits->disk;
-		$limitIo = 		$details->attributes->limits->io;
-		$limitCpu = 	$details->attributes->limits->cpu;
-		$limitThreads = $details->attributes->limits->threads;
-		$ip = 			$details->attributes->relationships->allocations->data[0]->attributes->ip;
-		$ipAlias =		$details->attributes->relationships->allocations->data[0]->attributes->ipAlias;
-		$port = 		$details->attributes->relationships->allocations->data[0]->attributes->port;
+		$name = 			$details->attributes->name;
+		$node = 			$details->attributes->node;
+		$description = 		$details->attributes->description;
+		$uuid = 			$details->attributes->uuid;
+		$limitMemory = 		$details->attributes->limits->memory;
+		$limitSwap = 		$details->attributes->limits->swap;
+		$limitDisk = 		$details->attributes->limits->disk;
+		$limitIo = 			$details->attributes->limits->io;
+		$limitCpu = 		$details->attributes->limits->cpu;
+		$limitThreads = 	$details->attributes->limits->threads;
+      
+      	// si on a plusieurs allocations pour un meme serveur, il faut récupérer les infos de celui qui a le flag is_default pour l'interroger
+      	foreach($details->attributes->relationships->allocations->data as $data) {
+          if($data->attributes->is_default == true) {
+              $ip = 		$data->attributes->ip;
+              $ipAlias =	$data->attributes->ip_alias;
+              $port = 		$data->attributes->port;
+          }
+        }
 
 		$limitMemory = round(($limitMemory/1024), 2);
 		$limitSwap = round(($limitSwap/1024), 2);
@@ -847,22 +853,31 @@ class pterodactyl extends eqLogic {
       
       	if($this->getConfiguration('type','') == "console")
           return;
+		
       
-		$ip = $this->getCmd(null, 'ip');
-      	if(is_object($ip))
-      		$pingIp = $ip->execCmd();
+      	$ipAlias = $this->getCmd(null, 'ipAlias');
+      	if(is_object($ipAlias))
+      		$ipAlias = $ipAlias->execCmd();
+
+        $ip = $this->getCmd(null, 'ip');
+        if(is_object($ip))
+          $ip = $ip->execCmd();
+      	
       
+      	$pingIp = (isset($ipAlias) && $ipAlias !== false && $ipAlias != "0") ? $ipAlias : $ip;
 		$port = $this->getCmd(null, 'port');
       	if(is_object($port))
         	$pingPort = $port->execCmd();
             
 		$game = $this->getConfiguration('game','');
-      	// @TODO, l'ip peut etre aussi un domaine.
-      	// si on met une ip local ça ne peut évidemment pas marché. mais c'est mon cas particulier de dev en VM sans "publier" les serveurs sur le web. à voir
-		if($game == "minecraft") {
+
+      if($game == "minecraft") {
 			$url = "https://minecraft-api.com/api/ping/" . $pingIp . "/" . $pingPort . "/json";
 			log::add('pterodactyl', 'debug', 'url ping = ' . $url);
 
+          	if(!filter_var($pingIp, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE)) // pas d'ip privée pour le ping joueurs
+	          	return;
+          
 			$content = @file_get_contents($url);
           	//$content = '{"description":"A Minecraft Server","players":{"max":500,"online":0},"version":{"name":"Spigot 1.8.8","protocol":4}}';
           	//$content = '{"version":{"name":"FlameCord 1.7.x-1.19.x","protocol":4},"players":{"max":500,"online":10,"sample":[{"name":"","id":"00000000000000000000000000000000"}]},"description":"\u00a7f\u00a76\u00a7lAdventure\u00a7e\u00a7lSky \u00a78\u25c6 \u00a7dSkyblock \u00a7a\u00a7lAdventure \u00a77[1.16+]\n\u00a77\u279c \u00a7fOuverture du serveur ce \u00a7bSamedi \u00e0 15h30 \u00a7f! \u00a7b/discord","modinfo":{"type":"FML","modList":[]}}';
@@ -964,6 +979,7 @@ class pterodactylCmd extends cmd {
 			case 'refresh': 
 			$eqLogic->updateMainInfos();
 			$eqLogic->updateInfos();
+            $eqLogic->updatePlayers();
 			break;
 			default:
 			throw new Error('This should not append!');

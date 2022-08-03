@@ -4,6 +4,10 @@
 >  
 > S'il n'y a pas d'information sur la mise à jour, c'est que celle-ci concerne uniquement de la mise à jour de documentation, de traduction ou de texte.  
 
+# 03/08/2022 - BETA
+
+- Amélioration de la récupération des joueurs en priorisant l'alias ip (l'ip retournée par l'API étant souvent l'ip locale du serv, impossible de récupérer le nombre de joueurs depuis l'extérieur) 
+
 # 02/08/2022 - BETA
 
 - Implementation du nombre de joueurs et joueurs max (uniquement minecraft est implanté actuellement).  

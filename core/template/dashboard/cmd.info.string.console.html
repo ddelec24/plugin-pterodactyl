@@ -54,7 +54,8 @@
 			consoleArea.empty();
 
 			if(socketPtero == "") {
-				console.log("[CONSOLE] Attention erreur de récupération du socket");
+				console.log("[INFO JEEDOM] Attention erreur de récupération du socket");
+              	consoleArea.append("[ERREUR JEEDOM] Attention erreur de récupération du socket<br />");
 				return false;
 			}
 			//console.log('envoi auth sur ' + socketPtero + " avec token " + tokenPtero);
@@ -85,7 +86,7 @@
 					}
 					// authentification ok
 					if(msg.event == "auth success") {
-						//consoleArea.append("[INFO JEEDOM] Connexion à la console établie" + "<br />");
+						consoleArea.append("[INFO JEEDOM] Connexion à la console rétablie<br />");
 					}
 			};
 
