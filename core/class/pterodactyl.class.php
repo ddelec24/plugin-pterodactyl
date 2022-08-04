@@ -896,7 +896,7 @@ class pterodactyl extends eqLogic {
 				$this->checkAndUpdateCmd("playersOnline", $online);
 				$this->checkAndUpdateCmd("playersMax", $max);
 			} else {
-				log::add('pterodactyl', 'error', "lecture des infos impossible: $content");
+				log::add('pterodactyl', 'debug', "lecture des infos impossible: $content");
 			}
 		}
 	}

@@ -1,12 +1,13 @@
 <div class="cmd #history#" data-type="info" data-subtype="string" data-template="multiline" data-version="#version#" data-eqLogic_id="#eqLogic_id#" data-cmd_id="#id#" data-cmd_uid="#uid#">
 	<div class="content-xs">
-		<button class="btn btn-sm btn-primary" id="activateConsole_#id#">Activer la console</button>
+		<button class="btn btn-sm btn-primary" id="activateConsole_#id#">Activer la console</button> <button class="btn btn-sm btn-secondary" id="desactivateConsole_#id#">Désactiver la console</button>
 	</div>
 	<div class="contentConsole_#id# content-md" style="text-align: left; font-size: 8pt; font-family: monospace; margin: 5px; overflow-y: scroll; word-wrap: break-word;">
 	</div>
 
 	<script>
 
+      	var sp = null;
 		var tokenPtero = null;
 		var socketPtero = null;
       	var tileHeight = $(".contentConsole_#id#").parents('.eqLogic').height(); // on récupère la hauteur de la tuile pour le répercuté sur le div console
@@ -21,7 +22,6 @@
             }, 1000); // toutes les 1sec on se met en bas
           	// @TODO implantation d'un arret du scroll auto si scroll up détecté? et on réactive si manuellement on revient bottom scroll
 		});
-
 
 		function getNewCredsWebSocket(_eqLogicId) {
 			tokenPtero = null;
@@ -54,18 +54,26 @@
 			consoleArea.empty();
 
 			if(socketPtero == "") {
-				console.log("[INFO JEEDOM] Attention erreur de récupération du socket");
+				console.log("[INFO JEEDOM] Attention erreur de récupération du socket.<br />");
               	consoleArea.append("[ERREUR JEEDOM] Attention erreur de récupération du socket<br />");
 				return false;
 			}
 			//console.log('envoi auth sur ' + socketPtero + " avec token " + tokenPtero);
 
-			const sp = new WebSocket(socketPtero);
+			sp = new WebSocket(socketPtero);
 			var messageAuthentication = {
 				event: "auth",
 				args: [tokenPtero]
 			};
 
+            $('#desactivateConsole_#id#').on('click', function() {
+              console.log(sp);
+              if(sp !== undefined) {
+                sp.close(1000); // cloture normale de socket
+                consoleArea.append("[INFO JEEDOM] Connexion à la console stoppée.<br />");
+              }
+            });
+          
 			sp.onmessage = function(event) {
 					//console.log("[message] Data received:" + event.data);
 					let msg = JSON.parse(event.data);
@@ -86,12 +94,13 @@
 					}
 					// authentification ok
 					if(msg.event == "auth success") {
-						consoleArea.append("[INFO JEEDOM] Connexion à la console rétablie<br />");
+						consoleArea.append("[INFO JEEDOM] Connexion à la console rétablie.<br />");
 					}
 			};
 
 			sp.onopen = function (event) {
 				sp.send(JSON.stringify(messageAuthentication));
+
 			}
 			sp.onclose = function (event) {
 				sp = null;
