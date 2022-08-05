@@ -939,7 +939,7 @@ class pterodactyl extends eqLogic {
 		$ret .= ($secs > 0) ? ($secs.' '.($secs == 1 ? 'seconde' : 'secondes')) : "";
 		return trim($ret);
 	}
-
+  
 }
 
 class pterodactylCmd extends cmd {

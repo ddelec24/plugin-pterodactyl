@@ -4,6 +4,16 @@
 >  
 > S'il n'y a pas d'information sur la mise à jour, c'est que celle-ci concerne uniquement de la mise à jour de documentation, de traduction ou de texte.  
 
+# 05/08/2022 - BETA
+
+- Colorisation de la console.  
+- Correction de la gestion des websocket multiples.  
+
+# 04/08/2022 - BETA
+
+- Passage d'un message d'erreur en debug au lieu de error si problème pour récupérer les joueurs en ligne.  
+- Bouton pour désactiver la console sans avoir à rafraichir la page.  
+
 # 03/08/2022 - BETA
 
 - Amélioration de la récupération des joueurs en priorisant l'alias ip (l'ip retournée par l'API étant souvent l'ip locale du serv, impossible de récupérer le nombre de joueurs depuis l'extérieur) 
