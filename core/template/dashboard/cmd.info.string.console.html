@@ -10,6 +10,7 @@
       
         $('.cmd[data-cmd_uid=#uid#] .activateConsole').show();
         $('.cmd[data-cmd_uid=#uid#] .stopConsole').hide();
+      
 		var tileHeight = $(".contentConsole_#id#").parents('.eqLogic').height(); // on récupère la hauteur de la tuile pour le répercuté sur le div console
 		$(".contentConsole_#id#").css('max-height', (parseInt(tileHeight) - 100) +'px'); // 100 de moins car il y a le bouton qui prend de lespace dans la tuile)
 
