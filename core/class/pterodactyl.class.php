@@ -479,7 +479,7 @@ class pterodactyl extends eqLogic {
 		$info = $this->getCmd(null, 'memoryBytes');
 		if (!is_object($info)) {
 			$info = new pterodactylCmd();
-			$info->setName(__('Mémoire RAM utilisée', __FILE__));
+			$info->setName(__('RAM', __FILE__));
 		}
 		$info->setOrder(19);
 		$info->setLogicalId('memoryBytes');
@@ -506,7 +506,7 @@ class pterodactyl extends eqLogic {
 		$info = $this->getCmd(null, 'cpuAbsolute');
 		if (!is_object($info)) {
 			$info = new pterodactylCmd();
-			$info->setName(__('Usage CPU', __FILE__));
+			$info->setName(__('CPU', __FILE__));
 		}
 		$info->setOrder(20);
 		$info->setLogicalId('cpuAbsolute');
