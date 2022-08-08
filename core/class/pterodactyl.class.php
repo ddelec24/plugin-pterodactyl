@@ -533,7 +533,7 @@ class pterodactyl extends eqLogic {
 		$info = $this->getCmd(null, 'diskBytes');
 		if (!is_object($info)) {
 			$info = new pterodactylCmd();
-			$info->setName(__('Espace disque utilisé', __FILE__));
+			$info->setName(__('Espace disque', __FILE__));
 		}
 		$info->setOrder(21);
 		$info->setLogicalId('diskBytes');
