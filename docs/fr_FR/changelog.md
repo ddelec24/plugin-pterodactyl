@@ -4,14 +4,13 @@
 >  
 > S'il n'y a pas d'information sur la mise à jour, c'est que celle-ci concerne uniquement de la mise à jour de documentation, de traduction ou de texte.  
 
-# 09/08/2022 - V1.1
+# 09/08/2022 - V1.1  
 
 - Amélioration de l'affichage dashboard.  
 - Ajout du nombre de joueurs en ligne / max pour minecraft.  
 - Possibilité d'afficher la console en temps réel sur une tuile secondaire sur le dashboard (voir documentation pour configuration!).  
 - Affichage de l'uptime du serveur.  
 - Correction de divers bugs.  
-  
   
 # 15/06/2022 - Stable
 
