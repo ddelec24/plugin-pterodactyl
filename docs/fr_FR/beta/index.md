@@ -100,3 +100,5 @@ Remarques:
   
 - Pour toutes autres questions, merci de vérifier si la question n'a pas été posée sur le community => [https://community.jeedom.com/tag/plugin-pterodactyl](https://community.jeedom.com/tag/plugin-pterodactyl). Si ce n'est pas le cas, n'hésitez pas à demander de l'aide.  
 
+
+  

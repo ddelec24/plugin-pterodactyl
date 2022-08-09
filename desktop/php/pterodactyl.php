@@ -1,30 +1,35 @@
 <?php
-if (!isConnect('admin')) {
-	throw new Exception('{{401 - Accès non autorisé}}');
-}
-// Déclaration des variables obligatoires
-$plugin = plugin::byId('pterodactyl');
-sendVarToJS('eqType', $plugin->getId());
-$eqLogics = eqLogic::byType($plugin->getId());
-$infosPteroServ = [];
-foreach ($eqLogics as $eqLogic) {
-	$current = [];
-	$name = $eqLogic->getCmd(null, 'name');
-	$name = $name->execCmd();
-	$node = $eqLogic->getCmd(null, 'node');
-	$node = $node->execCmd();
-	$uuid = $eqLogic->getCmd(null, 'uuid');
-	$uuid = $uuid->execCmd();
-	$ip = $eqLogic->getCmd(null, 'ip');
-	$ip = $ip->execCmd();
-	$port = $eqLogic->getCmd(null, 'port');
-	$port = $port->execCmd();
-	$current["nomnode"] = $name . " / node " . $node;
-	$current["uuid"] = $uuid;
-	$current["ipport"] = $ip . ":" . $port;
-	$infosPteroServ[$eqLogic->getId()] = $current;
-}
-sendVarToJS('infosPteroServ', $infosPteroServ);
+	if (!isConnect('admin')) {
+		throw new Exception('{{401 - Accès non autorisé}}');
+	}
+	// Déclaration des variables obligatoires
+	$plugin = plugin::byId('pterodactyl');
+	sendVarToJS('eqType', $plugin->getId());
+	$eqLogics = eqLogic::byType($plugin->getId());
+	$infosPteroServ = [];
+	foreach ($eqLogics as $eqLogic) {
+		if($eqLogic->getConfiguration('type', '') == 'console')
+		continue;
+		$current = [];
+		$name = $eqLogic->getCmd(null, 'name');
+		$name = $name->execCmd();
+		$node = $eqLogic->getCmd(null, 'node');
+		$node = $node->execCmd();
+		$uuid = $eqLogic->getCmd(null, 'uuid');
+		$uuid = $uuid->execCmd();
+		$ip = $eqLogic->getCmd(null, 'ip');
+		$ip = $ip->execCmd();
+		$port = $eqLogic->getCmd(null, 'port');
+		$port = $port->execCmd();
+		$current["nomnode"] = $name . " / node " . $node;
+		$current["uuid"] = $uuid;
+		$current["ipport"] = $ip . ":" . $port;
+		$infosPteroServ[$eqLogic->getId()] = $current;
+	}
+	$logLevel = log::convertLogLevel(log::getLogLevel('pterodactyl')); // pour n'afficher les équipements liés qu'en mode debug
+	$infosPteroServ['loglevel'] = $logLevel; // @TODO inutilisé pour le moment
+
+	sendVarToJS('infosPteroServ', $infosPteroServ);
 
 ?>
 
@@ -39,11 +44,6 @@ sendVarToJS('infosPteroServ', $infosPteroServ);
 				<br>
 				<span>{{Synchronisation automatique}}</span>
 			</div>
-			<div class="cursor eqLogicAction" data-action="add">
-				<i class="fas fa-plus-circle"></i>
-				<br>
-				<span>{{Ajouter un serveur manuellement}}</span>
-			</div>
 			<div class="cursor eqLogicAction logoSecondary" data-action="gotoPluginConf">
 				<i class="fas fa-wrench"></i>
 				<br>
@@ -52,35 +52,37 @@ sendVarToJS('infosPteroServ', $infosPteroServ);
 		</div>
 		<legend><i class="fas fa-table"></i> {{le(s) serveur(s)}}</legend>
 		<?php
-		if (count($eqLogics) == 0) {
-			echo '<br><div id="div_results" class="text-center" style="font-size:1.2em;font-weight:bold;">{{Aucun serveur trouvé, cliquer sur "Synchroniser" pour commencer}}</div>';
-		} else {
-			// Champ de recherche
-			echo '<div class="input-group" style="margin:5px;">';
-			echo '<input class="form-control roundedLeft" placeholder="{{Rechercher}}" id="in_searchEqlogic">';
-			echo '<div class="input-group-btn">';
-			echo '<a id="bt_resetSearch" class="btn" style="width:30px"><i class="fas fa-times"></i></a>';
-			echo '<a class="btn roundedRight hidden" id="bt_pluginDisplayAsTable" data-coreSupport="1" data-state="0"><i class="fas fa-grip-lines"></i></a>';
-			echo '</div>';
-			echo '</div>';
-			// Liste des équipements du plugin
-			echo '<div id="div_results"></div>';
-			echo '<div class="eqLogicThumbnailContainer">';            
-			foreach ($eqLogics as $eqLogic) {
-				$opacity = ($eqLogic->getIsEnable()) ? '' : 'disableCard';
-				echo '<div class="eqLogicDisplayCard cursor '.$opacity.'" data-eqLogic_id="' . $eqLogic->getId() . '">';
-				echo '<img src="' . $plugin->getPathImgIcon() . '">';
-				echo '<br>';
-				echo '<span class="name">' . $eqLogic->getHumanName(true, true) . '</span>';
-				echo '<span class="hiddenAsCard displayTableRight hidden">';
-				echo ($eqLogic->getIsVisible() == 1) ? '<i class="fas fa-eye" title="{{Equipement visible}}"></i>' : '<i class="fas fa-eye-slash" title="{{Equipement non visible}}"></i>';
-				echo '</span>';
+			if (count($eqLogics) == 0) {
+				echo '<br><div id="div_results" class="text-center" style="font-size:1.2em;font-weight:bold;">{{Aucun serveur trouvé, cliquer sur "Synchroniser" pour commencer}}</div>';
+			} else {
+				// Champ de recherche
+				echo '<div class="input-group" style="margin:5px;">';
+					echo '<input class="form-control roundedLeft" placeholder="{{Rechercher}}" id="in_searchEqlogic">';
+					echo '<div class="input-group-btn">';
+						echo '<a id="bt_resetSearch" class="btn" style="width:30px"><i class="fas fa-times"></i></a>';
+						echo '<a class="btn roundedRight hidden" id="bt_pluginDisplayAsTable" data-coreSupport="1" data-state="0"><i class="fas fa-grip-lines"></i></a>';
+					echo '</div>';
+				echo '</div>';
+				// Liste des équipements du plugin
+				echo '<div id="div_results"></div>';
+				echo '<div class="eqLogicThumbnailContainer">';            
+					foreach ($eqLogics as $eqLogic) {
+						if($eqLogic->getConfiguration('type', '') == 'console' && $logLevel != 'debug')
+						continue;
+						$opacity = ($eqLogic->getIsEnable()) ? '' : 'disableCard';
+						echo '<div class="eqLogicDisplayCard cursor '.$opacity.'" data-eqLogic_id="' . $eqLogic->getId() . '">';
+							echo '<img src="' . $plugin->getPathImgIcon() . '">';
+							echo '<br>';
+							echo '<span class="name">' . $eqLogic->getHumanName(true, true) . '</span>';
+							echo '<span class="hiddenAsCard displayTableRight hidden">';
+								echo ($eqLogic->getIsVisible() == 1) ? '<i class="fas fa-eye" title="{{Equipement visible}}"></i>' : '<i class="fas fa-eye-slash" title="{{Equipement non visible}}"></i>';
+							echo '</span>';
+						echo '</div>';
+					}
 				echo '</div>';
 			}
-			echo '</div>';
-		}
 		?>
-	
+		
 	</div> <!-- /.eqLogicThumbnailDisplay -->
 
 	<!-- Page de présentation de l'équipement -->
@@ -124,11 +126,11 @@ sendVarToJS('infosPteroServ', $infosPteroServ);
 									<select id="sel_object" class="eqLogicAttr form-control" data-l1key="object_id">
 										<option value="">{{Aucun}}</option>
 										<?php
-										$options = '';
-										foreach ((jeeObject::buildTree(null, false)) as $object) {
-											$options .= '<option value="' . $object->getId() . '">' . str_repeat('&nbsp;&nbsp;', $object->getConfiguration('parentNumber')) . $object->getName() . '</option>';
-										}
-										echo $options;
+											$options = '';
+											foreach ((jeeObject::buildTree(null, false)) as $object) {
+												$options .= '<option value="' . $object->getId() . '">' . str_repeat('&nbsp;&nbsp;', $object->getConfiguration('parentNumber')) . $object->getName() . '</option>';
+											}
+											echo $options;
 										?>
 									</select>
 								</div>
@@ -137,11 +139,11 @@ sendVarToJS('infosPteroServ', $infosPteroServ);
 								<label class="col-sm-4 control-label">{{Catégorie}}</label>
 								<div class="col-sm-6">
 									<?php
-									foreach (jeedom::getConfiguration('eqLogic:category') as $key => $value) {
-										echo '<label class="checkbox-inline">';
-										echo '<input type="checkbox" class="eqLogicAttr" data-l1key="category" data-l2key="' . $key . '" >' . $value['name'];
-										echo '</label>';
-									}
+										foreach (jeedom::getConfiguration('eqLogic:category') as $key => $value) {
+											echo '<label class="checkbox-inline">';
+												echo '<input type="checkbox" class="eqLogicAttr" data-l1key="category" data-l2key="' . $key . '" >' . $value['name'];
+											echo '</label>';
+										}
 									?>
 								</div>
 							</div>
@@ -152,12 +154,29 @@ sendVarToJS('infosPteroServ', $infosPteroServ);
 									<label class="checkbox-inline"><input type="checkbox" class="eqLogicAttr" data-l1key="isVisible" checked>{{Visible}}</label>
 								</div>
 							</div>
-							
+							<div class="form-group">
+								<label class="col-sm-4 control-label" >{{Jeux}} <sup><i class="fas fa-question-circle tooltips" title="{{Information nécessaire pour récupérer le nombre de joueurs en ligne / max}}"></i></sup></label> 
+                                	
+								<div class="col-sm-6">
+									<select class="eqLogicAttr form-control" data-l1key="configuration" data-l2key="game">
+										<option value="aucun">{{Aucun}}</option>
+										<option value="minecraft">{{Minecraft}}</option>
+										<option value="other">{{Autres à venir}}</option>
+									</select>
+								</div>
+							</div>
+							<div class="form-group">
+								<label class="col-sm-4 control-label">{{Affichage Console}} <sup><i class="fas fa-question-circle tooltips" title="{{Permet d'avoir la console en temps réel comme sur le panel pterodactyl}}"></i></sup></label>
+								<div class="col-sm-6">
+									<label class="checkbox-inline"><input type="checkbox" class="eqLogicAttr" data-l1key="configuration" data-l2key="displayTileConsole" >{{Activer la tuile sur le dashboard}}</label>
+								</div>
+							</div>
 						</div>
 
 						<!-- Partie droite de l'onglet "Équipement" -->
 						<!-- Affiche un champ de commentaire par défaut mais vous pouvez y mettre ce que vous voulez -->
-						<div class="col-lg-6">
+
+						<div class="col-lg-6 displayInfosServerOnRightPanel">
 							<legend><i class="fas fa-info"></i> {{Informations}}</legend>
 							<div class="form-group">
 								<label class="col-sm-4 control-label">{{Nom sur le serveur et Node}}</label>
