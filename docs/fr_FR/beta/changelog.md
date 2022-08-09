@@ -4,6 +4,11 @@
 >  
 > S'il n'y a pas d'information sur la mise à jour, c'est que celle-ci concerne uniquement de la mise à jour de documentation, de traduction ou de texte.  
 
+# 09/08/2022 - CETTE VERSION PASSE EN STABLE
+
+- Pas de retours/corrections à faire sur la beta actuelle. On passe en stable.  
+- Prochain cycles de versions beta: **Gestion d'instances pterodactyl multiples**.  
+
 # 05/08/2022 - BETA
 
 - Colorisation de la console.  
