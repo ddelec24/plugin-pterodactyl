@@ -101,13 +101,16 @@ class pterodactyl extends eqLogic {
 	// Fonction exécutée automatiquement après la mise à jour de l'équipement
 	public function postUpdate() {
 		$display = $this->getConfiguration('displayTileConsole','');
-				// si on demande à voir la console, on l'active et on la place au meme endroit sur le dashboard
+		// si on demande à voir la console, on l'active et on la place au meme endroit sur le dashboard
 		$logicalId = $this->getLogicalId();
 		$currentDashboard = $this->getObject_id();
-		
+		$displayMainEq = $this->getIsEnable();
 		$eqConsole = eqLogic::byLogicalId($logicalId . '_console', 'pterodactyl');
+      	log::add('pterodactyl', 'debug',"postUpdate " . $display . $displayMainEq);
 		if(is_object($eqConsole)) {
-			if($display == 1) {
+
+			if($display == 1 && $displayMainEq == 1) { // si on demande la tuile console ET que léquipement principal est actif
+              	log::add('pterodactyl', 'debug',"postUpdate enable 1");
 				$eqConsole->setIsEnable(1);
 				$eqConsole->setIsVisible(1);
 				$eqConsole->setObject_id($currentDashboard);
@@ -118,39 +121,41 @@ class pterodactyl extends eqLogic {
 			$eqConsole->save();
 		}
 		
+      
 
 	}
 
 	// Fonction exécutée automatiquement avant la sauvegarde (création ou mise à jour) de l'équipement
 	public function preSave() {
 	}
-
+  
 	// Fonction exécutée automatiquement après la sauvegarde (création ou mise à jour) de l'équipement
 	public function postSave() {
 
 		if($this->getConfiguration('type','') == "console") { // si c'est la console correspondante on créé juste une info
-			// Création sous-type pour affichage console
-			$info = $this->getCmd(null, 'displayConsole');
-			if (!is_object($info)) {
-				$info = new pterodactylCmd();
-				$info->setName(__('Retour de la console', __FILE__));
-			}
-			$info->setOrder(1);
-			$info->setLogicalId('displayConsole');
-			$info->setConfiguration('type', 'console');
-			$info->setEqLogic_id($this->getId());
-			$info->setType('info');
-			$info->setSubType('string');
-			$info->setTemplate('dashboard', 'pterodactyl::console');
-			$info->setTemplate('mobile', 'pterodactyl::console');
-			$info->setIsVisible(1);
-			$info->setIsHistorized(0);
-			$info->setDisplay('title_disable', true); // @TODO mettre les bons params
-			$info->setDisplay('hide_name', true);
-			$info->setDisplay('forceReturnLineBefore', true);
-			$info->setDisplay('forceReturnLineAfter', true);
-			$info->save();
-			return;
+          $info = $this->getCmd(null, 'displayConsole');
+          if (!is_object($info)) {
+            log::add('pterodactyl', 'debug', 'créa console');
+            $info = new pterodactylCmd();
+            $info->setName(__('Retour de la console', __FILE__));
+          }
+          $info->setOrder(1);
+          $info->setLogicalId('displayConsole');
+          $info->setConfiguration('type', 'console');
+          $info->setEqLogic_id($this->getId());
+          $info->setType('info');
+          $info->setSubType('string');
+          $info->setTemplate('dashboard', 'pterodactyl::console');
+          $info->setTemplate('mobile', 'pterodactyl::console');
+          $info->setIsVisible(1);
+          $info->setIsHistorized(0);
+          $info->setDisplay('title_disable', true); // @TODO mettre les bons params
+          $info->setDisplay('hide_name', true);
+          $info->setDisplay('forceReturnLineBefore', true);
+          $info->setDisplay('forceReturnLineAfter', true);
+          $info->save();      
+
+          return;
 		}
 
 		// Nom du serv
@@ -705,6 +710,11 @@ class pterodactyl extends eqLogic {
 
 	// Fonction exécutée automatiquement après la suppression de l'équipement
 	public function postRemove() {
+		$logicalId = $this->getLogicalId();
+		
+		$eqConsole = eqLogic::byLogicalId($logicalId . '_console', 'pterodactyl');
+      	if(is_object($eqConsole))
+          $eqConsole->remove();
 	}
 
 	/*

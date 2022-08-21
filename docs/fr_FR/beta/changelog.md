@@ -4,6 +4,10 @@
 >  
 > S'il n'y a pas d'information sur la mise à jour, c'est que celle-ci concerne uniquement de la mise à jour de documentation, de traduction ou de texte.  
 
+# 21/08/2022 - BETA  
+  
+- Meilleure gestion de l'équipement console.  
+
 # 09/08/2022 - CETTE VERSION PASSE EN STABLE
 
 - Pas de retours/corrections à faire sur la beta actuelle. On passe en stable.  

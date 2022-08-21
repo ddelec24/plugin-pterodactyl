@@ -116,7 +116,7 @@ function syncServers() {
 			$newConsole = new pterodactyl();
 			$newConsole->setName($name . "_console");   	
 			$newConsole->setConfiguration('type', 'console');
-			$newConsole->setIsEnable(1);          	
+			$newConsole->setIsEnable(0);          	
 			$newConsole->setIsVisible(0);
 			$newConsole->setLogicalId($identifier . "_console");
 			$newConsole->setEqType_name('pterodactyl');

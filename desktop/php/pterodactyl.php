@@ -9,7 +9,8 @@
 	$infosPteroServ = [];
 	foreach ($eqLogics as $eqLogic) {
 		if($eqLogic->getConfiguration('type', '') == 'console')
-		continue;
+			continue;
+      
 		$current = [];
 		$name = $eqLogic->getCmd(null, 'name');
 		$name = $name->execCmd();
