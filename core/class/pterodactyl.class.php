@@ -100,7 +100,6 @@ class pterodactyl extends eqLogic {
 
 	// Fonction exécutée automatiquement après la mise à jour de l'équipement
 	public function postUpdate() {
-		$display = $this->getConfiguration('displayTileConsole','');
       
       	// si on active/désactive une instance, ça fait pareil pour les serveurs liés
       	if($this->getConfiguration('type') == "instance") {
@@ -123,20 +122,25 @@ class pterodactyl extends eqLogic {
     }
 
   	private function toggleConsole($serv) {
+      	$display = $serv->getConfiguration('displayTileConsole','');
+      
 		// si on demande à voir la console, on l'active et on la place au meme endroit sur le dashboard
 		$logicalId = $serv->getLogicalId();
 		$currentDashboard = $serv->getObject_id();
 		$displayMainEq = $serv->getIsEnable();
+      	log::add('pterodactyl', 'debug', "logicalId: $logicalId currentDash: $currentDashboard displayMaineq: $displayMainEq");
 		$eqConsole = eqLogic::byLogicalId($logicalId . '_console', 'pterodactyl');
 		if(is_object($eqConsole)) {
-
+			log::add('pterodactyl', 'debug', "eqConsole!");
 			if($display == 1 && $displayMainEq == 1) { // si on demande la tuile console ET que léquipement principal est actif
 				$eqConsole->setIsEnable(1);
 				$eqConsole->setIsVisible(1);
 				$eqConsole->setObject_id($currentDashboard);
+              	log::add('pterodactyl', 'debug', "on display");
 			} else {
 				$eqConsole->setIsEnable(0);
 				$eqConsole->setIsVisible(0);
+              	log::add('pterodactyl', 'debug', "on display pas");
 			}
 			$eqConsole->save();
 		}

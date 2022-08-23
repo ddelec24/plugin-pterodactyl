@@ -24,10 +24,10 @@
 		$ip = $ip->execCmd();
 		$ipAlias = $eqLogic->getCmd(null, 'ipAlias');
 		$ipAlias = $ipAlias->execCmd();
-      	$ipAlias = ($ipAlias != "") ? " (" . $ipAlias . ")" : "";
+      	$ipAlias = ($ipAlias != "" && $ipAlias != 0) ? " (" . $ipAlias . ")" : "";
 		$port = $eqLogic->getCmd(null, 'port');
 		$port = $port->execCmd();
-		$current["nomnode"] = $name . " / node " . $node;
+		$current["nomnode"] = $name . " / node: " . $node;
 		$current["uuid"] = $uuid;
 		$current["ipport"] = $ip . ":" . $port . $ipAlias;
 		$infosPteroServ[$eqLogic->getId()] = $current;

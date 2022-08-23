@@ -110,7 +110,7 @@ function printEqLogic(_eqLogic) {
       $('#namePteroServ').html(infosPteroServ[eqLogic]['nomnode']);
       $('#uuidPteroServ').html(infosPteroServ[eqLogic]['uuid']);
       $('#portPteroServ').html(infosPteroServ[eqLogic]['ipport']);
-      $('#graphPteroServ').html("ICI graphique des 30 dernières minutes par exemple?");
+      //$('#graphPteroServ').html("ICI graphique des 30 dernières minutes par exemple?");
 
       $('.displayInfosServerOnRightPanel').show();
     } else {
