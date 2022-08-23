@@ -4,6 +4,11 @@
 >  
 > S'il n'y a pas d'information sur la mise à jour, c'est que celle-ci concerne uniquement de la mise à jour de documentation, de traduction ou de texte.  
 
+# 24/08/2022 - BETA  
+  
+- Passage en multi-instance, en cours, des bugs peuvent être encore présents.  
+  
+  
 # 21/08/2022 - BETA  
   
 - Meilleure gestion de l'équipement console.  

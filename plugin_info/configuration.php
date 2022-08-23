@@ -22,39 +22,3 @@ if (!isConnect()) {
   die();
 }
 ?>
-<form class="form-horizontal">
-  <fieldset>
-    <div class="form-group">
-      <label class="col-md-4 control-label">{{Url de votre pterodactyl}}
-        <sup><i class="fas fa-question-circle tooltips" title="{{Renseignez la racine de votre pterodactyl (ex: https://mypterodactyl.io) sans le / de fin}}"></i></sup>
-      </label>
-      <div class="col-md-4">
-        <input class="configKey form-control" data-l1key="pteroRootUrl"/>
-      </div>
-    </div>
-    <div class="form-group">
-      <label class="col-md-4 control-label">{{Clé API pour les requêtes}}
-        <sup><i class="fas fa-question-circle tooltips" title="{{Clé API de l'utilisateur qui fera les requêtes}}"></i></sup>
-      </label>
-      <div class="col-md-4">
-        <input class="configKey form-control" data-l1key="apiKey"/>
-      </div>
-    </div>
-    <div class="form-group">
-      <label class="col-md-4 control-label">{{Je suis admin}}
-        <sup><i class="fas fa-question-circle tooltips" title="{{Si vous avez créé une clé API Application, cochez cette case, plus d'informations dans la documentation du plugin}}"></i></sup>
-      </label>
-      <div class="col-md-4">
-        <input type="checkbox" class="configKey form-control" data-l1key="iAmAdmin"/>
-      </div>
-    </div>
-	<div class="form-group">
-          <div class="col-md-4"></div>
-          <div class="col-md-6">
-          		<i>* aide pour avoir une clé api : <a href="https://dashflo.net/docs/api/pterodactyl/v1/">
-      				https://dashflo.net/docs/api/pterodactyl/v1/
-				</a></i>
-          </div>
-	</div>
-  </fieldset>
-</form>

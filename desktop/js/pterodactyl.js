@@ -84,53 +84,39 @@ function addCmdToTable(_cmd) {
 	})
 }
 
-$('.eqLogicAttr[data-l1key=configuration][data-l2key=type]').on('change',function(){
-	console.log('chargement ici');
-	type = $(this).value()
-	if (type == 'bobo')
-	{
-		$("span[data-cmd_id='Firmware']").html('bibi')
-		$("div[data-cmd_id='Firmware']").show()
-	}
-});
-
-/*
-$('.eqLogicAttr[data-l1key=configuration][data-l2key=displayTileConsole]').on('change', function(){
-		
 
 
-		isActivated = $(this).value()
+function printEqLogic(_eqLogic) {
+    let eqLogic = _eqLogic.id;
+  	$('.displayInfosServerOnRightPanel').hide();
+  	
+  	// Création d'un équiepement, pas de type, donc on créé un champs caché
+  	console.log(_eqLogic.configuration.hasOwnProperty('type'));
+  	if(!_eqLogic.configuration.hasOwnProperty('type')) {
+    	let code = '<input type="hidden" class="eqLogicAttr form-control" data-l1key="configuration" data-l2key="type" value="instance">';
+        $('.serverGroup').hide();
+        $('.instanceGroup').show();
+       	$('.form-horizontal').append(code);
+      	return;
+    }
+  
+	if(_eqLogic.configuration.type == "instance") {
+      $('.serverGroup').hide();
+      $('.instanceGroup').show();
+    } else if(_eqLogic.configuration.type == "server") {
+      $('.instanceGroup').hide();
+      $('.serverGroup').show();
 
+      $('#namePteroServ').html(infosPteroServ[eqLogic]['nomnode']);
+      $('#uuidPteroServ').html(infosPteroServ[eqLogic]['uuid']);
+      $('#portPteroServ').html(infosPteroServ[eqLogic]['ipport']);
+      $('#graphPteroServ').html("ICI graphique des 30 dernières minutes par exemple?");
 
-
-
-		if(isActivated == "1") {
-			console.log('activation de la tuile');
-		} else {
-			console.log('désactivation de la tuile');
-		}
-	});*/
-
-	function printEqLogic(_eqLogic) {
-		console.log(infosPteroServ);
-		let eqLogic = _eqLogic.id;
-		console.log("eqlogic: " + eqLogic);
-		console.log(infosPteroServ[eqLogic]);
-
-	if(!(_eqLogic.configuration.hasOwnProperty("type"))) { // si c'est pas le type console
-
-		$('#namePteroServ').html(infosPteroServ[eqLogic]['nomnode']);
-	$('#uuidPteroServ').html(infosPteroServ[eqLogic]['uuid']);
-	$('#portPteroServ').html(infosPteroServ[eqLogic]['ipport']);
-	$('#graphPteroServ').html("ICI graphique des 30 dernières minutes par exemple?");
-
-	$('.displayInfosServerOnRightPanel').show();
-	$('.eqLogicAttr[data-l1key=configuration][data-l2key=displayTileConsole]').parents('.form-group').show();
-} else {
-	$('.displayInfosServerOnRightPanel').hide();
-	$('.eqLogicAttr[data-l1key=configuration][data-l2key=game]').parents('.form-group').hide();
-	$('.eqLogicAttr[data-l1key=configuration][data-l2key=displayTileConsole]').parents('.form-group').hide();
-}
+      $('.displayInfosServerOnRightPanel').show();
+    } else {
+      $('.serverGroup').hide();
+      $('.instanceGroup').hide();
+    }
 
 	/*jeedom.cmd.update[_eqLogic] = function(_options) {
 		console.log(_eqLogic.id + '=>' + _options.display_value)
@@ -180,7 +166,7 @@ function runSync() {
 			console.log(data);
 
 			if(data.result.new == 0){
-				$('#div_results').empty().append("<center><span style='color:#767676;font-size:1.2em;font-weight: bold;'>{{Aucun serveur trouvé, vérifiez les paramètres dans la configuration et cliquez sur \"Synchroniser\"}}</span></center>");
+				$('#div_results').empty().append("<center><span style='color:#767676;font-size:1.2em;font-weight: bold;'>{{Aucun serveur trouvé, vérifiez les paramètres dans la configuration de vos instances.}}</span></center>");
 				return;
 			} else {
 				var plurilizedNewServers = (data.result.new == 1) ? "Nouveau serveur détecté" : "Nouveaux serveurs détectés";

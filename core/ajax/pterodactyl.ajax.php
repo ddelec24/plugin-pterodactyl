@@ -56,75 +56,84 @@ catch (Exception $e) {
 
 
 function syncServers() {
-	
-	log::add('pterodactyl', 'debug', '======== SYNC PTERODACTYL ========');
-	$p = new pterodactylApi(config::byKey('apiKey', 'pterodactyl'), config::byKey('pteroRootUrl', 'pterodactyl'), config::byKey('iAmAdmin', 'pterodactyl'));
-	$response = $p->getListServers();
-	log::add('pterodactyl', 'debug', "liste des serveurs: " . json_encode($response));
-	$detailServers = [];
-	$new = 0;
-	foreach ($response->data as $server) {
-		
-		$identifier = 	$server->attributes->identifier;
-		$uuid = 		$server->attributes->uuid;
-		$name = 		$server->attributes->name;
-		$node = 		$server->attributes->node;
+  	log::add('pterodactyl', 'debug', '======== SYNC PTERODACTYL ========');
+    $detailServers = [];
+    $new = 0;
+  	foreach(eqLogic::byTypeAndSearhConfiguration('pterodactyl', '"type":"instance"') as $instance) {
+    	if($instance->getIsEnable() == 0)
+          continue;
+      
+      	$instanceId = $instance->getId();
+        log::add('pterodactyl', 'debug', $instance->getName());
+        $p = new pterodactylApi($instance->getConfiguration('apiKey', ''), $instance->getConfiguration('pteroRootUrl', ''), $instance->getConfiguration('iAmAdmin', ''));
+        $response = $p->getListServers();
+        log::add('pterodactyl', 'debug', "liste des serveurs: " . json_encode($response));
 
-		
-		$allServers = eqLogic::byType('pterodactyl');
-		$alreadyExists = false;
-		$consoleExists = false;
-		foreach($allServers as $s) {
-			// le serveur est déjà est déjà connu
-			if($identifier == $s->getLogicalId()) {
-				// on actualise les infos
-				$s->updateInfos();
-				$s->updateMainInfos();
-				$alreadyExists = true;
-			}
-			// on vérifie si sa console existe bien
-			if($identifier . "_console" == $s->getLogicalId()) {
-				$consoleExists = true;
-			}
-		}
-		// on a parcouru la liste des serveurs existants et il n'y est pas, on le créé maintenant
-		if(!$alreadyExists) {
-			$newServ = new pterodactyl();
-			$newServ->setName($name);
-			$newServ->setIsEnable(1);
-			$newServ->setIsVisible(0);
-			$newServ->setLogicalId($identifier);
-			$newServ->setEqType_name('pterodactyl');
-			$newServ->save();
+        foreach ($response->data as $server) {
 
-			$newServ->updateMainInfos(); // enregistrement des infos principales, nom, node, ip
-			$newServ->updateInfos(); // on lance une actualisation dans la foulée pour que ça créé les commandes
+            $identifier = 	$server->attributes->identifier;
+            $uuid = 		$server->attributes->uuid;
+            $name = 		$server->attributes->name;
+            $node = 		$server->attributes->node;
 
-			$detailServers[] = [
-				'eqlogic' => $newServ->getId(),
-				'identifier' => $identifier,
-				'uuid' => $uuid,
-				'name' => $name,
-				'node' => $node,
-			];
-			
-			$new++;
-		}
 
-		if(!$consoleExists) {
-			// On ajoute aussi la console à part
-			$newConsole = new pterodactyl();
-			$newConsole->setName($name . "_console");   	
-			$newConsole->setConfiguration('type', 'console');
-			$newConsole->setIsEnable(0);          	
-			$newConsole->setIsVisible(0);
-			$newConsole->setLogicalId($identifier . "_console");
-			$newConsole->setEqType_name('pterodactyl');
-			$newConsole->save();
-			log::add('pterodactyl', 'debug', "[CONSOLE] ajout console " . $newConsole->getId() . " ok");
-		}
+            $allServers = eqLogic::byType('pterodactyl');
+            $alreadyExists = false;
+            $consoleExists = false;
+            foreach($allServers as $s) {
+                // le serveur est déjà est déjà connu
+                if($identifier == $s->getLogicalId()) {
+                    // on actualise les infos
+                    $s->updateInfos();
+                    $s->updateMainInfos();
+                    $alreadyExists = true;
+                }
+                // on vérifie si sa console existe bien
+                if($identifier . "_console" == $s->getLogicalId()) {
+                    $consoleExists = true;
+                }
+            }
+            // on a parcouru la liste des serveurs existants et il n'y est pas, on le créé maintenant
+            if(!$alreadyExists) {
+                $newServ = new pterodactyl();
+                $newServ->setName($name);
+                $newServ->setIsEnable(1);
+                $newServ->setIsVisible(0);
+              	$newServ->setConfiguration('type', 'server');
+              	$newServ->setConfiguration('instanceId', $instanceId);
+                $newServ->setLogicalId($identifier);
+                $newServ->setEqType_name('pterodactyl');
+                $newServ->save();
 
-	}
+                $newServ->updateMainInfos(); // enregistrement des infos principales, nom, node, ip
+                $newServ->updateInfos(); // on lance une actualisation dans la foulée pour que ça créé les commandes
+
+                $detailServers[] = [
+                    'eqlogic' => $newServ->getId(),
+                    'identifier' => $identifier,
+                    'uuid' => $uuid,
+                    'name' => $name,
+                    'node' => $node,
+                ];
+
+                $new++;
+            }
+
+            if(!$consoleExists) {
+                // On ajoute aussi la console à part
+                $newConsole = new pterodactyl();
+                $newConsole->setName($name . "_console");   	
+                $newConsole->setConfiguration('type', 'console');
+                $newConsole->setIsEnable(0);          	
+                $newConsole->setIsVisible(0);
+                $newConsole->setLogicalId($identifier . "_console");
+                $newConsole->setEqType_name('pterodactyl');
+                $newConsole->save();
+                log::add('pterodactyl', 'debug', "[CONSOLE] ajout console " . $newConsole->getId() . " ok");
+            }
+
+        } // foreach server
+    } // foreach instance
 
 	$return = ["new" => $new, "servers" => $detailServers];
 	log::add('pterodactyl', 'debug', json_encode($return));

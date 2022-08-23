@@ -19,13 +19,43 @@ require_once dirname(__FILE__) . '/../../../core/php/core.inc.php';
 
 // Fonction exécutée automatiquement après l'installation du plugin
 function pterodactyl_install() {
+  config::save('multipleInstance', 'ok', 'pterodactyl');
 }
 
 // Fonction exécutée automatiquement après la mise à jour du plugin
 function pterodactyl_update() {
-	// ré-enregistrement des équipements
+	
+  	$multipleInstance = config::byKey('multipleInstance', 'pterodactyl', 'nok', true);
+  	// création d'une instance principale pour rattacher les serveurs - MAJ MULTI INSTANCE
+  	if($multipleInstance != "ok") {
+      $newInstance = new pterodactyl();
+      $newInstance->setName("Instance 1");   	
+      $newInstance->setIsEnable(1);          	
+      $newInstance->setIsVisible(0);
+      $newInstance->setConfiguration('type', 'instance');
+      $newInstance->setConfiguration('pteroRootUrl',config::byKey('pteroRootUrl', 'pterodactyl'));
+      $newInstance->setConfiguration('apiKey',config::byKey('apiKey', 'pterodactyl'));
+      $newInstance->setConfiguration('iAmAdmin',config::byKey('iAmAdmin', 'pterodactyl'));
+      $newInstance->setEqType_name('pterodactyl');
+      $newInstance->save();
+      
+      $instanceId = $newInstance->getId();
+      // marqueur passage multi instance fait
+      config::save('multipleInstance', 'ok', 'pterodactyl');
+      //on supprime lancienne config générale vu que c'est par instance maintenant
+	  config::remove('pteroRootUrl', 'pterodactyl');
+      config::remove('apiKey', 'pterodactyl');
+      config::remove('iAmAdmin', 'pterodactyl');
+    }
+  
 	foreach (pterodactyl::byType('pterodactyl', true) as $pterodactyl) {
 		try {
+          	// MAJ passage mono instance à multi instance
+          	if($multipleInstance != "ok" && $pterodactyl->getConfiguration('type') == "") { 
+                  $pterodactyl->setConfiguration('type', 'server');
+                  $pterodactyl->setConfiguration('instanceId', $instanceId);              
+            }
+          	// ré-enregistrement des équipements
 			$pterodactyl->save();
           	// actualisation du widget
           	$pterodactyl->refreshWidget();	
@@ -33,6 +63,9 @@ function pterodactyl_update() {
 			//throw new Exception(__('Erreur lors de la sauvegarde ', __FILE__));
 		}
 	}
+  
+  	return;
+  
 }
 
 // Fonction exécutée automatiquement après la suppression du plugin

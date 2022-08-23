@@ -5,10 +5,12 @@
 	// Déclaration des variables obligatoires
 	$plugin = plugin::byId('pterodactyl');
 	sendVarToJS('eqType', $plugin->getId());
+	$eqLogicsInstances = eqLogic::byTypeAndSearhConfiguration($plugin->getId(), '"type":"instance"');
 	$eqLogics = eqLogic::byType($plugin->getId());
+
 	$infosPteroServ = [];
 	foreach ($eqLogics as $eqLogic) {
-		if($eqLogic->getConfiguration('type', '') == 'console')
+		if($eqLogic->getConfiguration('type', '') != 'server')
 			continue;
       
 		$current = [];
@@ -20,11 +22,14 @@
 		$uuid = $uuid->execCmd();
 		$ip = $eqLogic->getCmd(null, 'ip');
 		$ip = $ip->execCmd();
+		$ipAlias = $eqLogic->getCmd(null, 'ipAlias');
+		$ipAlias = $ipAlias->execCmd();
+      	$ipAlias = ($ipAlias != "") ? " (" . $ipAlias . ")" : "";
 		$port = $eqLogic->getCmd(null, 'port');
 		$port = $port->execCmd();
 		$current["nomnode"] = $name . " / node " . $node;
 		$current["uuid"] = $uuid;
-		$current["ipport"] = $ip . ":" . $port;
+		$current["ipport"] = $ip . ":" . $port . $ipAlias;
 		$infosPteroServ[$eqLogic->getId()] = $current;
 	}
 	$logLevel = log::convertLogLevel(log::getLogLevel('pterodactyl')); // pour n'afficher les équipements liés qu'en mode debug
@@ -40,6 +45,11 @@
 		<legend><i class="fas fa-cog"></i>  {{Gestion}}</legend>
 		<!-- Boutons de gestion du plugin -->
 		<div class="eqLogicThumbnailContainer">
+          <div class="cursor eqLogicAction logoPrimary" data-action="add">
+            <i class="fas fa-plus-circle"></i>
+            <br>
+            <span>{{Ajouter une instance}}</span>
+          </div>
 			<div class="cursor eqLogicAction logoPrimary" data-action="sync">
 				<i class="fas fa-sync"></i>
 				<br>
@@ -51,11 +61,32 @@
 				<span>{{Configuration}}</span>
 			</div>
 		</div>
-		<legend><i class="fas fa-table"></i> {{le(s) serveur(s)}}</legend>
-		<?php
-			if (count($eqLogics) == 0) {
-				echo '<br><div id="div_results" class="text-center" style="font-size:1.2em;font-weight:bold;">{{Aucun serveur trouvé, cliquer sur "Synchroniser" pour commencer}}</div>';
+  		<legend><i class="fas fa-table"></i> {{Le(s) instance(s)}}</legend>
+			<?php
+  			if (count($eqLogicsInstances) == 0) {
+				echo '<br><div id="div_results" class="text-center" style="font-size:1.2em;font-weight:bold;">{{Aucune instance trouvée, cliquez sur "Ajouter une instance"}}</div>';
 			} else {
+				echo '<div class="eqLogicThumbnailContainer">';            
+					foreach ($eqLogicsInstances as $eqLogicsInstance) {
+						$opacity = ($eqLogicsInstance->getIsEnable()) ? '' : 'disableCard';
+						echo '<div class="eqLogicDisplayCard cursor '.$opacity.'" data-eqLogic_id="' . $eqLogicsInstance->getId() . '">';
+							echo '<img src="' . $plugin->getPathImgIcon() . '">';
+							echo '<br>';
+							echo '<span class="name">' . $eqLogicsInstance->getHumanName(true, true) . '</span>';
+							echo '<span class="hiddenAsCard displayTableRight hidden">';
+							echo ($eqLogicsInstance->getIsVisible() == 1) ? '<i class="fas fa-eye" title="{{Equipement visible}}"></i>' : '<i class="fas fa-eye-slash" title="{{Equipement non visible}}"></i>';
+							echo '</span>';
+						echo '</div>';
+					}
+				echo '</div>';
+            }
+			?>
+                       
+		<legend><i class="fas fa-table"></i> {{Le(s) serveur(s)}}</legend>
+		<?php
+			//if (count($eqLogics) == 0) {
+			//	echo '<br><div id="div_results" class="text-center" style="font-size:1.2em;font-weight:bold;">{{Aucun serveur trouvé, cliquez sur "Synchroniser automatique"}}</div>';
+			//} else {
 				// Champ de recherche
 				echo '<div class="input-group" style="margin:5px;">';
 					echo '<input class="form-control roundedLeft" placeholder="{{Rechercher}}" id="in_searchEqlogic">';
@@ -68,11 +99,15 @@
 				echo '<div id="div_results"></div>';
 				echo '<div class="eqLogicThumbnailContainer">';            
 					foreach ($eqLogics as $eqLogic) {
-						if($eqLogic->getConfiguration('type', '') == 'console' && $logLevel != 'debug')
-						continue;
+						if(($eqLogic->getConfiguration('type', '') == 'console' && $logLevel != 'debug') || $eqLogic->getConfiguration('type', '') == 'instance')
+							continue;
+                      	
+                      	$instanceId = $eqLogic->getConfiguration('instanceId', '');
+                      	$nameInstance = ($eqLogic->getConfiguration('type', '') == 'server') ? eqLogic::byId($instanceId)->getName() : "";
 						$opacity = ($eqLogic->getIsEnable()) ? '' : 'disableCard';
 						echo '<div class="eqLogicDisplayCard cursor '.$opacity.'" data-eqLogic_id="' . $eqLogic->getId() . '">';
-							echo '<img src="' . $plugin->getPathImgIcon() . '">';
+                      		echo '<p class="displayInstance">&nbsp;' . $nameInstance . '</p>';
+							echo '<img src="' . $plugin->getPathImgIcon() . '" style="padding-top: 5px">';
 							echo '<br>';
 							echo '<span class="name">' . $eqLogic->getHumanName(true, true) . '</span>';
 							echo '<span class="hiddenAsCard displayTableRight hidden">';
@@ -81,8 +116,9 @@
 						echo '</div>';
 					}
 				echo '</div>';
-			}
+			//}
 		?>
+
 		
 	</div> <!-- /.eqLogicThumbnailDisplay -->
 
@@ -155,23 +191,47 @@
 									<label class="checkbox-inline"><input type="checkbox" class="eqLogicAttr" data-l1key="isVisible" checked>{{Visible}}</label>
 								</div>
 							</div>
-							<div class="form-group">
+
+							<hr />
+                            <!-- INSTANCE -->
+							<div class="form-group instanceGroup">
+								<label class="col-sm-4 control-label" >{{Url de votre pterodactyl}} <sup><i class="fas fa-question-circle tooltips" title="{{Renseignez la racine de votre pterodactyl (ex: https://mypterodactyl.io) sans le / de fin}}"></i></sup></label>
+								<div class="col-sm-6">
+									<input class="eqLogicAttr form-control" data-l1key="configuration" data-l2key="pteroRootUrl" />
+								</div>
+							</div>
+							<div class="form-group instanceGroup">
+								<label class="col-sm-4 control-label" >{{Clé API pour les requêtes}} <sup><i class="fas fa-question-circle tooltips" title="{{Clé API de l'utilisateur qui fera les requêtes}}"></i></sup></label>
+								<div class="col-sm-6">
+									<input class="eqLogicAttr form-control" data-l1key="configuration" data-l2key="apiKey" />
+								</div>
+							</div>
+							<div class="form-group instanceGroup">
+								<label class="col-sm-4 control-label" >{{Je suis Admin}} <sup><i class="fas fa-question-circle tooltips" title="{{Si vous avez créé une clé API Application, cochez cette case, plus d'informations dans la documentation du plugin}}"></i></sup></label>
+								<div class="col-sm-6">
+									<input type="checkbox" class="eqLogicAttr form-control" data-l1key="configuration" data-l2key="iAmAdmin" />
+								</div>
+							</div>
+                            <!-- / INSTANCE -->
+                            <!-- SERVER -->
+							<div class="form-group serverGroup">
 								<label class="col-sm-4 control-label" >{{Jeux}} <sup><i class="fas fa-question-circle tooltips" title="{{Information nécessaire pour récupérer le nombre de joueurs en ligne / max}}"></i></sup></label> 
                                 	
 								<div class="col-sm-6">
 									<select class="eqLogicAttr form-control" data-l1key="configuration" data-l2key="game">
 										<option value="aucun">{{Aucun}}</option>
 										<option value="minecraft">{{Minecraft}}</option>
-										<option value="other">{{Autres à venir}}</option>
+										<option value="other" disabled="disabled">{{Autres à venir, n'hésitez pas à demander sur le forum}}</option>
 									</select>
 								</div>
 							</div>
-							<div class="form-group">
+							<div class="form-group serverGroup">
 								<label class="col-sm-4 control-label">{{Affichage Console}} <sup><i class="fas fa-question-circle tooltips" title="{{Permet d'avoir la console en temps réel comme sur le panel pterodactyl}}"></i></sup></label>
 								<div class="col-sm-6">
 									<label class="checkbox-inline"><input type="checkbox" class="eqLogicAttr" data-l1key="configuration" data-l2key="displayTileConsole" >{{Activer la tuile sur le dashboard}}</label>
 								</div>
 							</div>
+                            <!-- SERVER -->
 						</div>
 
 						<!-- Partie droite de l'onglet "Équipement" -->
@@ -232,6 +292,16 @@
 		</div><!-- /.tab-content -->
 	</div><!-- /.eqLogic -->
 </div><!-- /.row row-overflow -->
+
+<style>
+.displayInstance {
+	margin: 0;
+    padding: 0;
+    color: var(--eqTitle-color) !important;
+    font-size: 9pt;
+    font-style: italic;
+}
+</style>
 
 <!-- Inclusion du fichier javascript du plugin (dossier, nom_du_fichier, extension_du_fichier, id_du_plugin) -->
 <?php include_file('desktop', 'pterodactyl', 'js', 'pterodactyl');?>

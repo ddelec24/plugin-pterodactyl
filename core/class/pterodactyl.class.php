@@ -101,16 +101,36 @@ class pterodactyl extends eqLogic {
 	// Fonction exécutée automatiquement après la mise à jour de l'équipement
 	public function postUpdate() {
 		$display = $this->getConfiguration('displayTileConsole','');
+      
+      	// si on active/désactive une instance, ça fait pareil pour les serveurs liés
+      	if($this->getConfiguration('type') == "instance") {
+        	$instanceIsEnable = $this->getIsEnable();
+              $instanceId = $this->getId();
+              $eqLogicsServer = eqLogic::byTypeAndSearhConfiguration("pterodactyl", '"type":"server"');
+              foreach($eqLogicsServer as $server) {
+              	if($server->getConfiguration('instanceId') == $instanceId) {
+                	$server->setIsEnable($instanceIsEnable);
+                  	$server->save();
+                  
+                  	self::toggleConsole($server); //on fait suivre la console dans le même état
+                }
+              }
+        }
+      
+      	self::toggleConsole($this);
+
+
+    }
+
+  	private function toggleConsole($serv) {
 		// si on demande à voir la console, on l'active et on la place au meme endroit sur le dashboard
-		$logicalId = $this->getLogicalId();
-		$currentDashboard = $this->getObject_id();
-		$displayMainEq = $this->getIsEnable();
+		$logicalId = $serv->getLogicalId();
+		$currentDashboard = $serv->getObject_id();
+		$displayMainEq = $serv->getIsEnable();
 		$eqConsole = eqLogic::byLogicalId($logicalId . '_console', 'pterodactyl');
-      	log::add('pterodactyl', 'debug',"postUpdate " . $display . $displayMainEq);
 		if(is_object($eqConsole)) {
 
 			if($display == 1 && $displayMainEq == 1) { // si on demande la tuile console ET que léquipement principal est actif
-              	log::add('pterodactyl', 'debug',"postUpdate enable 1");
 				$eqConsole->setIsEnable(1);
 				$eqConsole->setIsVisible(1);
 				$eqConsole->setObject_id($currentDashboard);
@@ -120,18 +140,17 @@ class pterodactyl extends eqLogic {
 			}
 			$eqConsole->save();
 		}
-		
-      
-
-	}
-
+    }
+  
 	// Fonction exécutée automatiquement avant la sauvegarde (création ou mise à jour) de l'équipement
 	public function preSave() {
 	}
   
 	// Fonction exécutée automatiquement après la sauvegarde (création ou mise à jour) de l'équipement
 	public function postSave() {
-
+		if($this->getConfiguration('type','') == "instance")
+           return; // les instances ont pas de cmd, juste de la configuration
+          
 		if($this->getConfiguration('type','') == "console") { // si c'est la console correspondante on créé juste une info
           $info = $this->getCmd(null, 'displayConsole');
           if (!is_object($info)) {
@@ -706,12 +725,23 @@ class pterodactyl extends eqLogic {
 
 	// Fonction exécutée automatiquement avant la suppression de l'équipement
 	public function preRemove() {
+      	if($this->getConfiguration('type') == "instance") { // suppression instance = suppression des serveurs associés
+              $instanceId = $this->getId();
+              $eqLogicsServer = eqLogic::byTypeAndSearhConfiguration("pterodactyl", '"type":"server"');
+              foreach($eqLogicsServer as $server) {
+              	if($server->getConfiguration('instanceId') == $instanceId)
+                  	$server->remove();
+              }
+        }
 	}
 
 	// Fonction exécutée automatiquement après la suppression de l'équipement
-	public function postRemove() {
+	public function postRemove() { 
+      	if($this->getConfiguration('type') != "server")
+          return;
+      
 		$logicalId = $this->getLogicalId();
-		
+		log::add('pterodactyl', 'debug', "suppression console associée : ");
 		$eqConsole = eqLogic::byLogicalId($logicalId . '_console', 'pterodactyl');
       	if(is_object($eqConsole))
           $eqConsole->remove();
@@ -754,9 +784,15 @@ class pterodactyl extends eqLogic {
 	/*     * **********************Getteur Setteur*************************** */
 	public function updateMainInfos() {
 		$identifier = $this->getLogicalId();
-		$p = new pterodactylApi(config::byKey('apiKey', 'pterodactyl'), config::byKey('pteroRootUrl', 'pterodactyl'), config::byKey('iAmAdmin', 'pterodactyl'));
+
+        if($this->getConfiguration('type','') != "server")
+          return;
+
+        $infosInstance = self::getInfosFromInstance($this->getConfiguration('instanceId',''));
+        $p = new pterodactylApi($infosInstance['apiKey'], $infosInstance['pteroRootUrl'], $infosInstance['iAmAdmin']);
+      
 		$details = $p->getServerDetails($identifier);
-		//log::add('pterodactyl', 'debug', "function updateMainInfos() : " . $identifier . ": " . json_encode($details));
+
 		log::add('pterodactyl', 'debug', "function updateMainInfos() : " . json_encode($details->attributes));
 
 		$name = 			$details->attributes->name;
@@ -774,7 +810,7 @@ class pterodactyl extends eqLogic {
       	foreach($details->attributes->relationships->allocations->data as $data) {
           if($data->attributes->is_default == true) {
               $ip = 		$data->attributes->ip;
-              $ipAlias =	$data->attributes->ip_alias;
+              $ipAlias =	(empty($data->attributes->ip_alias)) ? "" : $data->attributes->ip_alias;
               $port = 		$data->attributes->port;
           }
         }
@@ -822,13 +858,27 @@ class pterodactyl extends eqLogic {
 		$this->refreshWidget();
 	}
 	
+	private function getInfosFromInstance($instanceId) {
+  		$eqLogic = eqLogic::byId($instanceId);
+      	if(!is_object($eqLogic))
+          throw new Error('This should not append!');
+      
+      	return["apiKey" => $eqLogic->getConfiguration('apiKey', ''),
+               "pteroRootUrl" => $eqLogic->getConfiguration('pteroRootUrl', ''),
+               "iAmAdmin" => $eqLogic->getConfiguration('iAmAdmin', '')
+               ];
+          
+  	}
+  
 	public function updateInfos() {
 		$identifier = $this->getLogicalId();
       
-      	if($this->getConfiguration('type','') == "console")
+      	if($this->getConfiguration('type','') != "server")
           return;
       
-        $p = new pterodactylApi(config::byKey('apiKey', 'pterodactyl'), config::byKey('pteroRootUrl', 'pterodactyl'), config::byKey('iAmAdmin', 'pterodactyl'));
+        $infosInstance = self::getInfosFromInstance($this->getConfiguration('instanceId',''));
+        $p = new pterodactylApi($infosInstance['apiKey'], $infosInstance['pteroRootUrl'], $infosInstance['iAmAdmin']);
+      
         $resources = $p->getResourcesUsage($identifier);
         log::add('pterodactyl', 'debug', "function updateInfos() : " . $identifier . ": " . json_encode($resources));
 
@@ -861,7 +911,7 @@ class pterodactyl extends eqLogic {
 
 	public function updatePlayers() {
       
-      	if($this->getConfiguration('type','') == "console")
+      	if($this->getConfiguration('type','') != "server")
           return;
 		
       
@@ -883,7 +933,7 @@ class pterodactyl extends eqLogic {
 
       if($game == "minecraft") {
 			$url = "https://minecraft-api.com/api/ping/" . $pingIp . "/" . $pingPort . "/json";
-			log::add('pterodactyl', 'debug', 'url ping = ' . $url);
+			log::add('pterodactyl', 'debug', '[API PLAYERS] Url ping = ' . $url);
 
             if(filter_var($pingIp, FILTER_VALIDATE_IP)) { // on vérifie si on a une ip et qu'elle est pas locale
                 if(!filter_var($pingIp, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE))
@@ -894,11 +944,8 @@ class pterodactyl extends eqLogic {
             }
           
 			$content = @file_get_contents($url);
-          	//$content = '{"description":"A Minecraft Server","players":{"max":500,"online":0},"version":{"name":"Spigot 1.8.8","protocol":4}}';
-          	//$content = '{"version":{"name":"FlameCord 1.7.x-1.19.x","protocol":4},"players":{"max":500,"online":10,"sample":[{"name":"","id":"00000000000000000000000000000000"}]},"description":"\u00a7f\u00a76\u00a7lAdventure\u00a7e\u00a7lSky \u00a78\u25c6 \u00a7dSkyblock \u00a7a\u00a7lAdventure \u00a77[1.16+]\n\u00a77\u279c \u00a7fOuverture du serveur ce \u00a7bSamedi \u00e0 15h30 \u00a7f! \u00a7b/discord","modinfo":{"type":"FML","modList":[]}}';
-          	//$content = "tototo";
 
-			$json = json_decode($content);
+        	$json = json_decode($content);
 			if(is_object($json)) {
 				$online = $json->players->online;
 				$max = $json->players->max;
@@ -906,15 +953,17 @@ class pterodactyl extends eqLogic {
 				$this->checkAndUpdateCmd("playersOnline", $online);
 				$this->checkAndUpdateCmd("playersMax", $max);
 			} else {
-				log::add('pterodactyl', 'debug', "lecture des infos impossible: $content");
+				log::add('pterodactyl', 'debug', "[API PLAYERS] Lecture des infos impossible: $content");
 			}
-		}
+		} // FIN IF MINECRAFT
 	}
 	
 	public function changeState($newState) {
 		log::add("pterodactyl", "debug", "Changement d'état demandé: " . $newState);
 		$identifier = $this->getLogicalId();
-		$p = new pterodactylApi(config::byKey('apiKey', 'pterodactyl'), config::byKey('pteroRootUrl', 'pterodactyl'), config::byKey('iAmAdmin', 'pterodactyl'));
+
+        $infosInstance = self::getInfosFromInstance($this->getConfiguration('instanceId',''));
+        $p = new pterodactylApi($infosInstance['apiKey'], $infosInstance['pteroRootUrl'], $infosInstance['iAmAdmin']);
 
 		$response = $p->postChangeState($identifier, $newState);
 		sleep(10); // ajoute une petite tempo pour récupérer le nouvel état dans la foulée
@@ -923,7 +972,9 @@ class pterodactyl extends eqLogic {
 	
 	public function sendCmd($message) {
 		$identifier = $this->getLogicalId();
-		$p = new pterodactylApi(config::byKey('apiKey', 'pterodactyl'), config::byKey('pteroRootUrl', 'pterodactyl'), config::byKey('iAmAdmin', 'pterodactyl'));
+
+        $infosInstance = self::getInfosFromInstance($this->getConfiguration('instanceId',''));
+        $p = new pterodactylApi($infosInstance['apiKey'], $infosInstance['pteroRootUrl'], $infosInstance['iAmAdmin']);
 		
 		$response = $p->postSendCommand($identifier, str_replace(['"',"'"], "", trim($message))); //trim  + vire les quotes car la console accepte pas
       	// @TODO gestion codes HTTP 502 si offline comme dit dans la doc?
