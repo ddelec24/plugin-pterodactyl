@@ -97,44 +97,28 @@ function printEqLogic(_eqLogic) {
         $('.serverGroup').hide();
         $('.instanceGroup').show();
        	$('.form-horizontal').append(code);
+		$('#ongletCommandes').hide();
       	return;
     }
   
 	if(_eqLogic.configuration.type == "instance") {
       $('.serverGroup').hide();
       $('.instanceGroup').show();
+      $('#ongletCommandes').hide();
     } else if(_eqLogic.configuration.type == "server") {
       $('.instanceGroup').hide();
       $('.serverGroup').show();
-
+	  $('#ongletCommandes').show();
       $('#namePteroServ').html(infosPteroServ[eqLogic]['nomnode']);
       $('#uuidPteroServ').html(infosPteroServ[eqLogic]['uuid']);
       $('#portPteroServ').html(infosPteroServ[eqLogic]['ipport']);
-      //$('#graphPteroServ').html("ICI graphique des 30 dernières minutes par exemple?");
-
       $('.displayInfosServerOnRightPanel').show();
-    } else {
+    } else if(_eqLogic.configuration.type == "console") {
       $('.serverGroup').hide();
       $('.instanceGroup').hide();
+      $('#ongletCommandes').show();
     }
 
-	/*jeedom.cmd.update[_eqLogic] = function(_options) {
-		console.log(_eqLogic.id + '=>' + _options.display_value)
-		$('.cmd[data-cmd_id=' + _eqLogic.id + '] .form-control[data-key=value]').value(_options.display_value);
-	}*/
-	// jeedom.cmd.update[cmd_id]
-	//console.log("============");
-	//console.log(_options);
-	/*console.log(_eqLogic);
-	let arrayCmd = _eqLogic.cmd;
-	let eqName = arrayCmd.find(o => o.logicalId === 'name');
-	console.log("2======");
-	console.log(eqName.id);
-	console.log(jeedom.cmd.cache.byId[eqName.id]);
-	$('#namePteroServ').html(_eqLogic.cmd + " sur le node " + _eqLogic.node);
-	$('#uuidPteroServ').html(_eqLogic.uuid);
-	$('#portPteroServ').html(_eqLogic.ip + ":" + _eqLogic.port);
-	$('#graphPteroServ').html("ICI graphique des 30 dernières minutes par exemple?");*/
 }
 
 $('.eqLogicAction[data-action=sync]').on('click', function() {
@@ -142,6 +126,8 @@ $('.eqLogicAction[data-action=sync]').on('click', function() {
 	$('.eqLogicAction i:first').css({'color' : 'red'});
 	runSync();
 });
+
+
 
 function runSync() {
 	console.log('=== Sync in progress ===');

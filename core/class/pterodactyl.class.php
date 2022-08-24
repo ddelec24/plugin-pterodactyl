@@ -150,7 +150,7 @@ class pterodactyl extends eqLogic {
   
 	// Fonction exécutée automatiquement après la sauvegarde (création ou mise à jour) de l'équipement
 	public function postSave() {
-		if($this->getConfiguration('type','') == "instance")
+		if($this->getConfiguration('type','') == "instance" || $this->getConfiguration('type','') == "")
            return; // les instances ont pas de cmd, juste de la configuration
           
 		if($this->getConfiguration('type','') == "console") { // si c'est la console correspondante on créé juste une info
