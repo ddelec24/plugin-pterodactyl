@@ -11,10 +11,10 @@
 	"hasDependency" : false,
 	"hasOwnDeamon" : false,
 	"maxDependancyInstallTime" : 0,
-	"changelog" : "https://ddelec24.github.io/plugin-pterodactyl/#language#/changelog",
-	"documentation" : "https://ddelec24.github.io/plugin-pterodactyl/#language#/",
-	"changelog_beta" : "https://ddelec24.github.io/plugin-pterodactyl/#language#/beta/changelog",
-	"documentation_beta" : "https://ddelec24.github.io/plugin-pterodactyl/#language#/beta/",
+	"changelog" : "https://ddelec24.github.io/docs-jeedom/pterodactyl/#language#/changelog",
+	"documentation" : "https://ddelec24.github.io/docs-jeedom/pterodactyl/#language#/",
+	"changelog_beta" : "https://ddelec24.github.io/docs-jeedom/pterodactyl/#language#/beta/changelog",
+	"documentation_beta" : "https://ddelec24.github.io/docs-jeedom/pterodactyl/#language#/beta/",
 	"link" : {
 		"forum":"https://community.jeedom.com/tag/plugin-pterodactyl"
 	},

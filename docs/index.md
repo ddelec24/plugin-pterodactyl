@@ -3,11 +3,11 @@
   
 ## STABLE  
 
-- [CHANGELOG](/fr_FR/changelog.md)  
-- [DOCUMENTATION](/fr_FR/index.md)  
+- [CHANGELOG](https://ddelec24.github.io/docs-jeedom/pterodactyl/fr_FR/changelog)  
+- [DOCUMENTATION](https://ddelec24.github.io/docs-jeedom/pterodactyl/fr_FR/)  
 
 
 ## BETA  
 
-- [CHANGELOG](/fr_FR/beta/changelog.md)  
-- [DOCUMENTATION](/fr_FR/beta/index.md)
+- [CHANGELOG](https://ddelec24.github.io/docs-jeedom/pterodactyl/fr_FR/beta/changelog)  
+- [DOCUMENTATION](https://ddelec24.github.io/docs-jeedom/pterodactyl/fr_FR/beta/)
