@@ -934,7 +934,7 @@ class pterodactyl extends eqLogic {
 		$game = $this->getConfiguration('game','');
       if(!empty($game) && $game != "aucun" && $game != "other") {
         	//log::add('pterodactyl', 'debug', "[UPDATE PLAYERS] game = $game ; pingIp = $pingIp ; pingPort = $pingPort");
-			//$url = "https://minecraft-api.com/api/ping/" . $pingIp . "/" . $pingPort . "/json";
+			
 			//log::add('pterodactyl', 'debug', '[API PLAYERS] Url ping = ' . $url);
 
             /*if(filter_var($pingIp, FILTER_VALIDATE_IP)) { // on vérifie si on a une ip et qu'elle est pas locale
@@ -977,15 +977,20 @@ class pterodactyl extends eqLogic {
               'valheim'
             ];
 
-          	//$_debug = ($this->getDebug()) ? "--debug" : "";
-        	$_valveProtocol = (in_array($game, $valveProtocol)) ? "--requestRules" : "";
-        	$cmd = "gamedig --type " . $game . " " . $pingIp . ":" . $pingPort . " --socketTimeout 2000 $_valveProtocol";
-        	log::add('pterodactyl', 'debug', '[GAMEDIG] Commande = ' . $cmd);
-			//$content = @file_get_contents($url);
-			$content = shell_exec($cmd);
-            //log::add('pterodactyl', 'debug', '[GAMEDIG] Raw json = ' . $content);              
+        	if($game == "minecraftext") {
+              $url = "https://minecraft-api.com/api/ping/" . $pingIp . "/" . $pingPort . "/json";
+              $content = @file_get_contents($url);
+            } else {
+              //$_debug = ($this->getDebug()) ? "--debug" : "";
+              $_valveProtocol = (in_array($game, $valveProtocol)) ? "--requestRules" : "";
+              $cmd = "gamedig --type " . $game . " " . $pingIp . ":" . $pingPort . " --socketTimeout 2000 $_valveProtocol";
+              log::add('pterodactyl', 'debug', '[GAMEDIG] Commande = ' . $cmd);
+
+              $content = shell_exec($cmd);
+            }
+
         	$json = json_decode($content);
-        	//$json = json_decode($content);
+        
 			if(is_object($json)) {
 				//$online = $json->players->online;
 				//$max = $json->players->max;

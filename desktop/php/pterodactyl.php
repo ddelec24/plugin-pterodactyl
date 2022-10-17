@@ -244,6 +244,7 @@
                                         <option value="left4dead">Left 4 Dead</option>
                                         <option value="left4dead2">Left 4 Dead 2</option>
                                         <option value="minecraft">Minecraft</option>
+                                        <option value="minecraftext">Minecraft (via API externe)</option>
                                         <option value="minecraftpe">Minecraft: Bedrock Edition</option>
                                         <option value="mordhau">Mordhau</option>
                                         <option value="openarena">OpenArena</option>
