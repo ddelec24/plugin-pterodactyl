@@ -933,7 +933,7 @@ class pterodactyl extends eqLogic {
             
 		$game = $this->getConfiguration('game','');
       if(!empty($game) && $game != "aucun" && $game != "other") {
-        	//log::add('pterodactyl', 'debug', "[UPDATE PLAYERS] game = $game ; pingIp = $pingIp ; pingPort = $pingPort");
+        	log::add('pterodactyl', 'debug', "[UPDATE PLAYERS] game = $game ; pingIp = $pingIp ; pingPort = $pingPort");
 			
 			//log::add('pterodactyl', 'debug', '[API PLAYERS] Url ping = ' . $url);
 
@@ -945,7 +945,7 @@ class pterodactyl extends eqLogic {
                   return;
             }*/
         
-        	if(!filter_var($pingIp, FILTER_VALIDATE_IP) || !filter_var($pingIp, FILTER_VALIDATE_DOMAIN, FILTER_FLAG_HOSTNAME)) // on vérifie que l'alias soit un domaine correct et l'ip soit correcte
+        	if(!filter_var($pingIp, FILTER_VALIDATE_IP) && !filter_var($pingIp, FILTER_VALIDATE_DOMAIN, FILTER_FLAG_HOSTNAME)) // on vérifie que l'alias soit un domaine correct et l'ip soit correcte
                   return;
 
             $valveProtocol = [
@@ -980,6 +980,7 @@ class pterodactyl extends eqLogic {
         	if($game == "minecraftext") {
               $url = "https://minecraft-api.com/api/ping/" . $pingIp . "/" . $pingPort . "/json";
               $content = @file_get_contents($url);
+              log::add('pterodactyl', 'debug', '[MINECRAFTEXT] url = ' . $url);
             } else {
               //$_debug = ($this->getDebug()) ? "--debug" : "";
               $_valveProtocol = (in_array($game, $valveProtocol)) ? "--requestRules" : "";
