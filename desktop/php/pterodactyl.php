@@ -220,7 +220,48 @@
 								<div class="col-sm-6">
 									<select class="eqLogicAttr form-control" data-l1key="configuration" data-l2key="game">
 										<option value="aucun">{{Aucun}}</option>
-										<option value="minecraft">{{Minecraft}}</option>
+                                        <option value="7d2d">7 Days to Die</option>
+                                        <option value="arkse">Ark: Survival Evolved</option>
+                                        <option value="arma2">ARMA 2</option>
+                                        <option value="arma2oa">ARMA 2: Operation Arrowhead</option>
+                                        <option value="arma3">ARMA 3</option>
+                                        <option value="arma">ARMA: Armed Assault</option>
+                                        <option value="armacwa">ARMA: Cold War Assault</option>
+                                        <option value="armar">ARMA: Resistance</option>
+                                        <option value="assettocorsa">Assetto Corsa</option>
+                                        <option value="barotrauma">Barotrauma</option>
+                                        <option value="conanexiles">Conan Exiles</option>
+                                        <option value="csgo">Counter Strike : Global Offensive</option>
+                                        <option value="dayz">DayZ</option>
+                                        <option value="dayzmod">DayZ Mod</option>
+                                        <option value="garrysmod">Garry's Mod</option>
+                                        <option value="fivem">Grand Theft Auto V – FiveM</option>
+                                        <option value="mtasa">Grand Theft Auto: San Andreas - Multi Theft Auto</option>
+                                        <option value="mtavc">Grand Theft Auto: Vice City - Multi Theft Auto</option>
+                                        <option value="hurtworld">Hurtworld</option>
+                                        <option value="insurgencysandstorm">Insurgency: Sandstorm</option>
+                                        <option value="killingfloor2">Killing Floor 2</option>
+                                        <option value="left4dead">Left 4 Dead</option>
+                                        <option value="left4dead2">Left 4 Dead 2</option>
+                                        <option value="minecraft">Minecraft</option>
+                                        <option value="minecraftext">Minecraft (via API externe)</option>
+                                        <option value="minecraftpe">Minecraft: Bedrock Edition</option>
+                                        <option value="mordhau">Mordhau</option>
+                                        <option value="openarena">OpenArena</option>
+                                        <option value="openttd">OpenTTD</option>
+                                        <option value="pixark">PixARK</option>
+                                        <option value="przomboid">Project Zomboid</option>
+                                        <option value="quakelive">Quake Live</option>
+                                        <option value="rust">Rust</option>
+                                        <option value="squad">Squad</option>
+                                        <option value="starbound">Starbound</option>
+                                        <option value="svencoop">Sven Coop</option>
+                                        <option value="tfc">Team Fortress Classic</option>
+                                        <option value="forrest">The Forrest</option>
+                                        <option value="towerunite">Tower Unite</option>
+                                        <option value="unturned">unturned</option>
+                                        <option value="valheim">Valheim</option>
+
 										<option value="other" disabled="disabled">{{Autres à venir, n'hésitez pas à demander sur le forum}}</option>
 									</select>
 								</div>

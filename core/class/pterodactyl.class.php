@@ -926,36 +926,82 @@ class pterodactyl extends eqLogic {
           $ip = $ip->execCmd();
       	
       
-      	$pingIp = (isset($ipAlias) && $ipAlias !== false && $ipAlias != "0") ? $ipAlias : $ip;
+      	$pingIp = (!empty($ipAlias) && $ipAlias != "0") ? $ipAlias : $ip;
 		$port = $this->getCmd(null, 'port');
       	if(is_object($port))
         	$pingPort = $port->execCmd();
             
 		$game = $this->getConfiguration('game','');
+      if(!empty($game) && $game != "aucun" && $game != "other") {
+        	log::add('pterodactyl', 'debug', "[UPDATE PLAYERS] game = $game ; pingIp = $pingIp ; pingPort = $pingPort");
+			
+			//log::add('pterodactyl', 'debug', '[API PLAYERS] Url ping = ' . $url);
 
-      if($game == "minecraft") {
-			$url = "https://minecraft-api.com/api/ping/" . $pingIp . "/" . $pingPort . "/json";
-			log::add('pterodactyl', 'debug', '[API PLAYERS] Url ping = ' . $url);
-
-            if(filter_var($pingIp, FILTER_VALIDATE_IP)) { // on vérifie si on a une ip et qu'elle est pas locale
-                if(!filter_var($pingIp, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE))
-                    return;
+            /*if(filter_var($pingIp, FILTER_VALIDATE_IP)) { // on vérifie si on a une ip et qu'elle est pas locale
+                //if(!filter_var($pingIp, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE))
+                //    return;
             } else {
                 if(!filter_var($pingIp, FILTER_VALIDATE_DOMAIN, FILTER_FLAG_HOSTNAME)) // on vérifie que l'alias soit un domaine correct
                   return;
+            }*/
+        
+        	if(!filter_var($pingIp, FILTER_VALIDATE_IP) && !filter_var($pingIp, FILTER_VALIDATE_DOMAIN, FILTER_FLAG_HOSTNAME)) // on vérifie que l'alias soit un domaine correct et l'ip soit correcte
+                  return;
+
+            $valveProtocol = [
+              '7d2d',
+              'arkse',
+              'arma3',
+              'barotrauma',
+              'conanexiles',
+              'csgo',
+              'dayz',
+              'dayzmod',
+              'garrysmod',
+              'hurtworld',
+              'insurgencysandstorm',
+              'killingfloor2',
+              'left4dead',
+              'left4dead2',
+              'mordhau',
+              'pixark',
+              'quakelive',
+              'rust',
+              'squad',
+              'starbound',
+              'svencoop',
+              'tfc',
+              'forrest',
+              'towerunite',
+              'unturned',
+              'valheim'
+            ];
+
+        	if($game == "minecraftext") {
+              $url = "https://minecraft-api.com/api/ping/" . $pingIp . "/" . $pingPort . "/json";
+              $content = @file_get_contents($url);
+              log::add('pterodactyl', 'debug', '[MINECRAFTEXT] url = ' . $url);
+            } else {
+              //$_debug = ($this->getDebug()) ? "--debug" : "";
+              $_valveProtocol = (in_array($game, $valveProtocol)) ? "--requestRules" : "";
+              $cmd = "gamedig --type " . $game . " " . $pingIp . ":" . $pingPort . " --socketTimeout 2000 $_valveProtocol";
+              log::add('pterodactyl', 'debug', '[GAMEDIG] Commande = ' . $cmd);
+
+              $content = shell_exec($cmd);
             }
-          
-			$content = @file_get_contents($url);
 
         	$json = json_decode($content);
+        
 			if(is_object($json)) {
-				$online = $json->players->online;
-				$max = $json->players->max;
-				//log::add('pterodactyl', 'debug', "$online / $max joueurs");
+				//$online = $json->players->online;
+				//$max = $json->players->max;
+              	$online = count($json->players); // array of players
+              	$max = $json->maxplayers;
+				log::add('pterodactyl', 'debug', "$online / $max joueurs");
 				$this->checkAndUpdateCmd("playersOnline", $online);
 				$this->checkAndUpdateCmd("playersMax", $max);
 			} else {
-				log::add('pterodactyl', 'debug', "[API PLAYERS] Lecture des infos impossible: $content");
+				log::add('pterodactyl', 'debug', "[GAMEDIG] Lecture des infos impossible: $content");
 			}
 		} // FIN IF MINECRAFT
 	}

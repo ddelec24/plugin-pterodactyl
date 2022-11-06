@@ -2,10 +2,12 @@
   "pre-install": {
   },
   "apt": {
+    "npm": {}
   },
   "pip3": {
   },
   "npm": {
+    "gamedig": {}
   },
   "yarn": {
   },
